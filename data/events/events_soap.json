@@ -1,0 +1,47 @@
+[
+  {
+    "id": "soap-1600-001",
+    "themeId": "soap",
+    "year": 1600,
+    "title": "（ダミー）石鹸に関する出来事1",
+    "teaser": "このテーマはまだ本番のコンテンツが用意されていません（ダミー表示です）。",
+    "place": "未定",
+    "factLayer": "「石鹸」というテーマの出来事はまだ執筆されていません。これはテスト用のダミーデータです。",
+    "material": "（ダミー）具体的なマテリアルは未作成です。",
+    "sensation": "（ダミー）体感レイヤーは未作成です。",
+    "rationale": "（ダミー）選定理由は未作成です。",
+    "needsReview": false,
+    "reviewNote": null,
+    "sourceUrls": []
+  },
+  {
+    "id": "soap-1750-001",
+    "themeId": "soap",
+    "year": 1750,
+    "title": "（ダミー）石鹸に関する出来事2",
+    "teaser": "このテーマはまだ本番のコンテンツが用意されていません（ダミー表示です）。",
+    "place": "未定",
+    "factLayer": "「石鹸」というテーマの出来事はまだ執筆されていません。これはテスト用のダミーデータです。",
+    "material": "（ダミー）具体的なマテリアルは未作成です。",
+    "sensation": "（ダミー）体感レイヤーは未作成です。",
+    "rationale": "（ダミー）選定理由は未作成です。",
+    "needsReview": false,
+    "reviewNote": null,
+    "sourceUrls": []
+  },
+  {
+    "id": "soap-1900-001",
+    "themeId": "soap",
+    "year": 1900,
+    "title": "（ダミー）石鹸に関する出来事3",
+    "teaser": "このテーマはまだ本番のコンテンツが用意されていません（ダミー表示です）。",
+    "place": "未定",
+    "factLayer": "「石鹸」というテーマの出来事はまだ執筆されていません。これはテスト用のダミーデータです。",
+    "material": "（ダミー）具体的なマテリアルは未作成です。",
+    "sensation": "（ダミー）体感レイヤーは未作成です。",
+    "rationale": "（ダミー）選定理由は未作成です。",
+    "needsReview": false,
+    "reviewNote": null,
+    "sourceUrls": []
+  }
+]

@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>歴史の宮殿</title>
+<style>
+  /* ---------- palettes ---------- */
+  /* default (data-palette="amber"): warm charcoal-brown, softer than the old near-black */
+  :root{
+    --void:#2a221b;
+    --void-2:#332a21;
+    --instrument:#8c7a64;
+    --instrument-dim:#544636;
+    --ember:#e8975a;
+    --ember-dim:#8a5530;
+    --skin:#ede1d3;
+    --skin-2:#e2d2be;
+    --ink:#241b14;
+    --muted:#b3a48f;
+    --muted-warm:#c9b696;
+  }
+  html[data-palette="midnight"]{
+    --void:#161210;
+    --void-2:#1e1815;
+    --instrument:#6b5f52;
+    --instrument-dim:#3a322a;
+    --ember:#e08850;
+    --ember-dim:#7a4a2c;
+    --muted:#9c9086;
+    --muted-warm:#a89a86;
+  }
+  html[data-palette="limestone"]{
+    --void:#403a33;
+    --void-2:#4a433b;
+    --instrument:#a89a89;
+    --instrument-dim:#6d6156;
+    --ember:#c97a4a;
+    --ember-dim:#8f5836;
+    --muted:#c4b8a9;
+    --muted-warm:#d4c4ac;
+  }
+  html[data-palette="indigo"]{
+    --void:#181d2a;
+    --void-2:#212838;
+    --instrument:#5f6b85;
+    --instrument-dim:#333c52;
+    --ember:#d9a45a;
+    --ember-dim:#8a6a38;
+    --muted:#8b93a6;
+    --muted-warm:#a89a86;
+  }
+  html[data-palette="chalk-pink"]{
+    --void:#16302a;
+    --void-2:#1c3a32;
+    --instrument:#e6efe9;
+    --instrument-dim:#3f5b4e;
+    --ember:#e8829c;
+    --ember-dim:#a8607a;
+    --muted:#eef2ef;
+    --muted-warm:#f0c9d6;
+  }
+  html[data-palette="chalk-yellow"]{
+    --void:#16302a;
+    --void-2:#1c3a32;
+    --instrument:#e6efe9;
+    --instrument-dim:#3f5b4e;
+    --ember:#e8c85a;
+    --ember-dim:#a68a3c;
+    --muted:#eef2ef;
+    --muted-warm:#f0e0a8;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0;height:100%;
+    background:var(--void);
+    color:var(--skin);
+    font-family:"Hiragino Mincho ProN","YuMincho","Georgia",serif;
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  .tech{
+    font-family:"Hiragino Kaku Gothic ProN","Avenir Next","YuGothic","Segoe UI",sans-serif;
+  }
+  #app{
+    position:fixed;inset:0;
+    background:
+      radial-gradient(120% 90% at 50% 18%, var(--void-2) 0%, var(--void) 60%);
+  }
+
+  /* ---------- screens ---------- */
+  .screen{
+    position:absolute;inset:0;
+    display:none;flex-direction:column;
+  }
+  .screen.active{display:flex;}
+
+  header{
+    flex:0 0 auto;
+    padding:calc(env(safe-area-inset-top,0px) + 18px) 20px 6px;
+    text-align:center;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.32em;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .headline{
+    margin-top:10px;font-size:15px;color:var(--skin);letter-spacing:.03em;
+  }
+
+  /* ---------- ring screen ---------- */
+  .stage{
+    position:relative;
+    flex:1 1 auto;
+    display:flex;align-items:center;justify-content:center;
+    min-height:0;
+  }
+  .stage svg{
+    width:min(92vw, 82vh, 460px);
+    height:min(92vw, 82vh, 460px);
+    overflow:visible;
+  }
+  .ring{fill:none;stroke:var(--instrument);stroke-width:1;opacity:.55;}
+  .body-silhouette{opacity:.16;}
+  .body-silhouette circle{fill:var(--instrument-dim);}
+  .body-silhouette line{stroke:var(--instrument-dim);stroke-width:22;stroke-linecap:round;}
+  .tick{stroke:var(--instrument-dim);stroke-width:1;}
+  .tick-label{fill:var(--muted);font-size:16px;text-anchor:middle;dominant-baseline:middle;}
+  .node-hit{fill:transparent;cursor:pointer;}
+  .node-dot{
+    fill:var(--instrument);
+    stroke:var(--void);
+    stroke-width:2;
+    transition:fill .45s ease, r .3s ease;
+    animation:breathe 4.5s ease-in-out infinite;
+  }
+  .node-dot.visited{fill:var(--ember-dim);}
+  .node-dot.active{fill:var(--ember);}
+  .node-glow{
+    fill:var(--ember);
+    opacity:0;
+    transform-origin:center;
+    transform:scale(.3);
+    transition:opacity .45s ease, transform .45s ease;
+    filter:blur(6px);
+  }
+  .node-glow.active{opacity:.85;transform:scale(1);}
+  @keyframes breathe{
+    0%,100%{opacity:.75;} 50%{opacity:1;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .node-dot{animation:none;}
+  }
+
+  .center-label{
+    position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;pointer-events:none;
+    padding:0 30px;
+  }
+  .center-label .hint{
+    font-size:12px;color:var(--muted-warm);letter-spacing:.04em;
+  }
+  .center-label .empty-msg{
+    font-size:14px;color:var(--muted);letter-spacing:.06em;margin-bottom:6px;
+  }
+
+  .fab-wrap{
+    flex:0 0 auto;
+    display:flex;justify-content:center;
+    padding:0 20px calc(env(safe-area-inset-bottom,0px) + 26px);
+  }
+  .fab{
+    appearance:none;border:1px solid var(--ember-dim);
+    background:var(--ember-dim);color:var(--skin);
+    font-family:inherit;font-size:14px;letter-spacing:.1em;
+    padding:14px 34px;border-radius:999px;cursor:pointer;
+    box-shadow:0 8px 24px rgba(224,136,80,.18);
+    transition:transform .2s ease, background .2s ease;
+  }
+  .fab:active{transform:scale(.96);}
+  .fab.tech{font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;}
+
+  /* ---------- theme select screen ---------- */
+  .theme-list{
+    flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:14px 20px calc(env(safe-area-inset-bottom,0px) + 100px);
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  }
+  .theme-card{
+    border:1px solid var(--instrument-dim);
+    border-radius:14px;padding:16px 14px;
+    background:var(--void-2);cursor:pointer;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .theme-card.selected{
+    border-color:var(--ember);background:rgba(224,136,80,.12);
+  }
+  .theme-card .t-name{font-size:16px;color:var(--skin);}
+  .theme-card .t-cat{margin-top:6px;font-size:10.5px;color:var(--muted);letter-spacing:.06em;}
+  .theme-card .t-sense{margin-top:4px;font-size:10.5px;color:var(--muted-warm);letter-spacing:.03em;}
+  .theme-card .t-check{
+    float:right;width:16px;height:16px;border-radius:50%;
+    border:1px solid var(--instrument);
+  }
+  .theme-card.selected .t-check{background:var(--ember);border-color:var(--ember);}
+
+  .bottom-bar{
+    flex:0 0 auto;padding:14px 20px calc(env(safe-area-inset-bottom,0px) + 20px);
+    display:flex;justify-content:center;gap:10px;
+  }
+  .primary-btn{
+    appearance:none;border:none;flex:1 1 auto;max-width:230px;
+    background:var(--instrument-dim);color:var(--muted);
+    font-family:inherit;font-size:14px;letter-spacing:.1em;
+    padding:14px;border-radius:999px;cursor:not-allowed;
+    transition:background .2s ease, color .2s ease;
+  }
+  .primary-btn.enabled{
+    background:var(--ember-dim);color:var(--skin);cursor:pointer;
+  }
+  .primary-btn.tech{font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;}
+  .secondary-btn{
+    appearance:none;flex:0 0 auto;max-width:120px;
+    background:transparent;border:1px solid var(--instrument-dim);color:var(--muted);
+    font-family:inherit;font-size:14px;letter-spacing:.1em;
+    padding:14px 20px;border-radius:999px;cursor:pointer;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .secondary-btn:active{border-color:var(--instrument);}
+  .secondary-btn.tech{font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;}
+
+  /* ---------- pickup screen ---------- */
+  .pickup-header{
+    flex:0 0 auto;padding:calc(env(safe-area-inset-top,0px) + 18px) 20px 4px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+  }
+  .dots{display:flex;gap:7px;}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--instrument-dim);transition:background .3s ease;}
+  .dot.filled{background:var(--ember);}
+  .pickup-next{
+    appearance:none;border:1px solid var(--ember-dim);background:transparent;
+    color:var(--ember);font-family:inherit;font-size:11px;letter-spacing:.08em;
+    padding:6px 16px;border-radius:999px;cursor:pointer;
+    opacity:0;pointer-events:none;transition:opacity .25s ease;
+  }
+  .pickup-next.show{opacity:1;pointer-events:auto;}
+  .pickup-next.tech{font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;}
+
+  .pickup-stage{
+    flex:1 1 auto;position:relative;min-height:0;
+    display:flex;align-items:center;justify-content:center;
+    padding:10px 24px;
+  }
+  .pickup-empty{color:var(--muted);font-size:13px;letter-spacing:.04em;text-align:center;padding:0 30px;}
+
+  .card{
+    position:absolute;width:min(84vw,340px);max-height:74vh;
+    background:linear-gradient(180deg, var(--skin) 0%, var(--skin-2) 100%);
+    color:var(--ink);border-radius:20px;
+    box-shadow:0 16px 40px rgba(0,0,0,.4);
+    padding:24px 22px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    touch-action:none;cursor:grab;user-select:none;
+    font-family:"Hiragino Kaku Gothic ProN","Avenir Next","YuGothic",sans-serif;
+  }
+  .card.behind{
+    transform:scale(.94) translateY(10px);
+    box-shadow:0 8px 24px rgba(0,0,0,.28);
+    z-index:1;pointer-events:none;filter:brightness(.9);
+  }
+  .card.front{z-index:2;}
+  .card.dragging{transition:none;cursor:grabbing;}
+  .card.snap{transition:transform .35s cubic-bezier(.19,1,.22,1);}
+  .card.fly{transition:transform .4s ease, opacity .4s ease;opacity:0;}
+
+  .card-year{font-size:11px;letter-spacing:.12em;color:var(--ember-dim);}
+  .card-title{font-size:17px;font-weight:600;margin:5px 0 10px;line-height:1.5;}
+  .card-teaser{font-size:14px;line-height:1.75;color:#4a3d30;margin-bottom:12px;}
+  .card-place{font-size:11px;color:var(--muted-warm);margin-bottom:12px;}
+  .card-fact{font-size:13px;line-height:1.75;color:#4a3d30;border-top:1px solid rgba(36,27,20,.15);padding-top:12px;}
+
+  .stamp{
+    position:absolute;top:20px;font-size:13px;letter-spacing:.2em;
+    padding:6px 14px;border-radius:8px;border:2.5px solid;
+    opacity:0;transform:rotate(-14deg);font-family:"Hiragino Kaku Gothic ProN",sans-serif;
+    pointer-events:none;
+  }
+  .stamp.remember{left:18px;color:#3f8f5f;border-color:#3f8f5f;}
+  .stamp.skip{right:18px;color:#b0503f;border-color:#b0503f;transform:rotate(14deg);}
+
+  .pickup-fallback{
+    flex:0 0 auto;display:flex;justify-content:center;gap:26px;
+    padding:8px 20px calc(env(safe-area-inset-bottom,0px) + 22px);
+  }
+  .pill-btn{
+    appearance:none;border:1px solid var(--instrument-dim);background:var(--void-2);
+    color:var(--muted);font-family:"Hiragino Kaku Gothic ProN",sans-serif;
+    font-size:12px;letter-spacing:.06em;padding:10px 20px;border-radius:999px;cursor:pointer;
+  }
+  .pill-btn.skip{color:#c98f7f;}
+  .pill-btn.keep{color:var(--ember);}
+
+  /* ---------- scrim + sheet (event detail) ---------- */
+  .scrim{
+    position:fixed;inset:0;background:rgba(6,8,9,.6);
+    opacity:0;pointer-events:none;transition:opacity .35s ease;z-index:10;
+  }
+  .scrim.show{opacity:1;pointer-events:auto;}
+
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:11;
+    max-height:76vh;
+    background:linear-gradient(180deg, var(--skin) 0%, var(--skin-2) 100%);
+    color:var(--ink);
+    border-radius:22px 22px 0 0;
+    box-shadow:0 -20px 50px rgba(0,0,0,.4);
+    transform:translateY(106%);
+    transition:transform .45s cubic-bezier(.19,1,.22,1);
+    padding:10px 26px calc(env(safe-area-inset-bottom,0px) + 26px);
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .sheet.open{transform:translateY(0);}
+  .sheet-handle{
+    width:38px;height:4px;border-radius:2px;
+    background:rgba(36,27,20,.25);
+    margin:6px auto 18px;
+  }
+  .detail-eyebrow{
+    font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
+    font-size:12px;letter-spacing:.14em;color:var(--ember-dim);
+  }
+  .detail-teaser{
+    font-size:21px;line-height:1.55;margin:6px 0 8px;color:var(--ink);
+  }
+  .detail-place{
+    font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
+    font-size:11.5px;color:var(--muted-warm);letter-spacing:.03em;margin-bottom:16px;
+  }
+  .detail-body p{
+    margin:0 0 16px;font-size:15px;line-height:1.85;
+    opacity:0;transform:translateY(6px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .sheet.open .detail-body p{opacity:1;transform:none;}
+  .sheet.open .detail-body p:nth-child(1){transition-delay:.06s;}
+  .sheet.open .detail-body p:nth-child(2){transition-delay:.14s;}
+  .sheet.open .detail-body p:nth-child(3){transition-delay:.22s;}
+  .sheet.open .detail-body p:nth-child(4){transition-delay:.3s;}
+  .detail-body .tag{
+    display:block;font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
+    font-size:10px;letter-spacing:.18em;
+    color:var(--ember-dim);margin-bottom:5px;
+  }
+  .delete-btn{
+    appearance:none;border:1px solid rgba(176,80,63,.4);background:transparent;
+    color:#a3543f;font-family:"Hiragino Kaku Gothic ProN",sans-serif;
+    font-size:12px;letter-spacing:.06em;padding:10px 18px;border-radius:999px;
+    margin-top:6px;cursor:pointer;display:block;width:100%;
+  }
+
+  /* ---------- settings (palette picker) ---------- */
+  .settings-btn{
+    position:fixed;top:calc(env(safe-area-inset-top,0px) + 14px);right:16px;z-index:25;
+    width:36px;height:36px;border-radius:50%;
+    border:1px solid var(--instrument-dim);background:var(--void-2);color:var(--muted);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;cursor:pointer;appearance:none;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .settings-btn:active{transform:scale(.92);}
+  .settings-panel{
+    position:fixed;top:calc(env(safe-area-inset-top,0px) + 58px);right:16px;z-index:25;
+    background:var(--void-2);border:1px solid var(--instrument-dim);border-radius:14px;
+    padding:12px;display:none;flex-direction:column;gap:4px;min-width:200px;
+    box-shadow:0 16px 40px rgba(0,0,0,.45);
+  }
+  .settings-panel.open{display:flex;}
+  .settings-panel .s-title{
+    font-size:10.5px;letter-spacing:.14em;color:var(--muted);
+    padding:2px 8px 8px;
+  }
+  .palette-option{
+    display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;
+    cursor:pointer;border:1px solid transparent;background:none;width:100%;text-align:left;
+    font-family:inherit;
+  }
+  .palette-option:hover{border-color:var(--instrument-dim);}
+  .palette-option.active{border-color:var(--ember);background:rgba(224,136,80,.1);}
+  .palette-swatch{
+    width:20px;height:20px;border-radius:50%;flex:0 0 auto;
+    border:1px solid rgba(255,255,255,.15);
+  }
+  .palette-option .p-name{font-size:13px;color:var(--skin);}
+
+  ::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ 設定（テーマカラー選択） ============ -->
+  <button class="settings-btn" id="settingsBtn" aria-label="設定">&#9881;</button>
+  <div class="settings-panel" id="settingsPanel">
+    <div class="s-title tech">テーマカラー</div>
+    <div id="paletteList"></div>
+  </div>
+
+  <!-- ============ Screen 1: 円環UI画面（メイン） ============ -->
+  <div class="screen active" id="screen-ring">
+    <header>
+      <div class="eyebrow tech">歴史の宮殿</div>
+    </header>
+
+    <div class="stage">
+      <svg id="dial" viewBox="0 0 560 560" aria-hidden="true"></svg>
+      <div class="center-label" id="ringCenterLabel"></div>
+    </div>
+
+    <div class="fab-wrap">
+      <button class="fab tech" id="fabBtn">作成</button>
+    </div>
+  </div>
+
+  <!-- ============ Screen 2: テーマ選択画面 ============ -->
+  <div class="screen" id="screen-theme">
+    <header>
+      <div class="eyebrow tech">テーマを選ぶ</div>
+      <div class="headline tech">興味のあるテーマを選択してください（複数選択可・最大5つ）</div>
+    </header>
+    <div class="theme-list" id="themeList"></div>
+    <div class="bottom-bar">
+      <button class="secondary-btn tech" id="themeBackBtn">もどる</button>
+      <button class="primary-btn tech" id="themeNextBtn">次へ</button>
+    </div>
+  </div>
+
+  <!-- ============ Screen 3: 歴史ピックアップ画面 ============ -->
+  <div class="screen" id="screen-pickup">
+    <div class="pickup-header">
+      <div class="dots" id="pickupDots"></div>
+      <button class="pickup-next tech" id="pickupNextBtn">次へ ›</button>
+    </div>
+    <div class="pickup-stage" id="pickupStage"></div>
+    <div class="pickup-fallback">
+      <button class="pill-btn skip tech" id="fallbackSkip">✕ 興味ない</button>
+      <button class="pill-btn keep tech" id="fallbackKeep">△ 記憶する</button>
+    </div>
+  </div>
+
+  <!-- ============ shared: event detail sheet ============ -->
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-handle"></div>
+    <div class="detail-eyebrow tech" id="detailYear"></div>
+    <div class="detail-teaser" id="detailTeaser"></div>
+    <div class="detail-place tech" id="detailPlace"></div>
+    <div class="detail-body" id="detailBody"></div>
+    <button class="delete-btn" id="deleteBtn">この出来事を円環から削除する</button>
+  </div>
+
+</div>
+
+<script>
+/* ==================================================================
+   data layer
+   ================================================================== */
+const RING_KEY = 'rekishiNoKyuden.ringList.v1';
+let THEMES = [];                  // data/themes.json
+const eventCache = new Map();     // themeId -> event[]
+let ringList = [];                // [{id, addedAt}]
+
+function loadRingList(){
+  try{
+    const raw = localStorage.getItem(RING_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveRingList(){
+  try{ localStorage.setItem(RING_KEY, JSON.stringify(ringList)); }catch(e){}
+}
+
+async function loadThemes(){
+  const res = await fetch('data/themes.json');
+  THEMES = await res.json();
+}
+
+async function fetchEventsForTheme(themeId){
+  if (eventCache.has(themeId)) return eventCache.get(themeId);
+  try{
+    const res = await fetch(`data/events/events_${themeId}.json`);
+    if (!res.ok) throw new Error('not found');
+    const data = await res.json();
+    eventCache.set(themeId, data);
+    return data;
+  }catch(e){
+    console.warn('events not available for theme', themeId, e);
+    eventCache.set(themeId, []);
+    return [];
+  }
+}
+
+function themeIdFromEventId(eventId){
+  return eventId.split('-')[0];
+}
+
+async function resolveRingEvents(){
+  const themeIds = [...new Set(ringList.map(r => themeIdFromEventId(r.id)))];
+  await Promise.all(themeIds.map(fetchEventsForTheme));
+  const lookup = new Map();
+  themeIds.forEach(t => (eventCache.get(t) || []).forEach(e => lookup.set(e.id, e)));
+  return ringList
+    .map(r => lookup.get(r.id))
+    .filter(Boolean)
+    .sort((a, b) => a.year - b.year);
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ==================================================================
+   screen switching
+   ================================================================== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ==================================================================
+   settings — palette picker
+   ================================================================== */
+const PALETTE_KEY = 'rekishiNoKyuden.palette.v1';
+const PALETTES = [
+  { id: 'amber',       name: '琥珀の余韻', void: '#2a221b', ember: '#e8975a' },
+  { id: 'midnight',    name: '深夜の書斎', void: '#161210', ember: '#e08850' },
+  { id: 'limestone',   name: '石灰岩の回廊', void: '#403a33', ember: '#c97a4a' },
+  { id: 'indigo',      name: '藍色の残響', void: '#181d2a', ember: '#d9a45a' },
+  { id: 'chalk-pink',  name: '黒板（桃色チョーク）', void: '#16302a', ember: '#e8829c' },
+  { id: 'chalk-yellow', name: '黒板（黄色チョーク）', void: '#16302a', ember: '#e8c85a' }
+];
+
+function loadPalette(){
+  try{ return localStorage.getItem(PALETTE_KEY) || 'amber'; }
+  catch(e){ return 'amber'; }
+}
+
+function applyPalette(id){
+  document.documentElement.setAttribute('data-palette', id);
+  try{ localStorage.setItem(PALETTE_KEY, id); }catch(e){}
+  renderPaletteList(id);
+}
+
+function renderPaletteList(activeId){
+  const list = document.getElementById('paletteList');
+  list.innerHTML = '';
+  PALETTES.forEach(p => {
+    const opt = document.createElement('button');
+    opt.className = 'palette-option' + (p.id === activeId ? ' active' : '');
+    opt.innerHTML = `
+      <span class="palette-swatch" style="background:linear-gradient(135deg, ${p.void} 50%, ${p.ember} 50%)"></span>
+      <span class="p-name">${p.name}</span>
+    `;
+    opt.addEventListener('click', () => {
+      applyPalette(p.id);
+      document.getElementById('settingsPanel').classList.remove('open');
+    });
+    list.appendChild(opt);
+  });
+}
+
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  document.getElementById('settingsPanel').classList.toggle('open');
+});
+
+/* ==================================================================
+   Screen 1 — 円環UI画面
+   ================================================================== */
+const YEAR_MIN = 1500, YEAR_MAX = 2000;
+const CX = 280, CY = 280, R = 200;
+const svg = document.getElementById('dial');
+const NS = "http://www.w3.org/2000/svg";
+
+function angleForYear(y){
+  return (y - YEAR_MIN) / (YEAR_MAX - YEAR_MIN) * 360;
+}
+function pointOnRing(deg, radius){
+  const rad = (deg - 90) * Math.PI / 180;
+  return { x: CX + radius * Math.cos(rad), y: CY + radius * Math.sin(rad) };
+}
+function el(tag, attrs){
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+let ringEventsCache = [];
+
+function buildBodySilhouette(){
+  // A deliberately generic, unlabeled 大の字 (spread-eagle) pictogram, inscribed
+  // loosely within the ring. It's meant only as ambient texture suggesting "a body
+  // sits behind this circle" — it must never label or imply which exact point maps
+  // to which exact joint; that mapping stays entirely up to the user's imagination.
+  const g = el('g', {class:'body-silhouette'});
+  g.appendChild(el('circle', {cx:280, cy:145, r:24}));                  // head
+  g.appendChild(el('line', {x1:280, y1:172, x2:280, y2:300}));          // torso
+  g.appendChild(el('line', {x1:280, y1:185, x2:125, y2:150}));          // left arm
+  g.appendChild(el('line', {x1:280, y1:185, x2:435, y2:150}));          // right arm
+  g.appendChild(el('line', {x1:280, y1:300, x2:165, y2:455}));          // left leg
+  g.appendChild(el('line', {x1:280, y1:300, x2:395, y2:455}));          // right leg
+  return g;
+}
+
+async function renderRing(){
+  const centerLabel = document.getElementById('ringCenterLabel');
+  const fab = document.getElementById('fabBtn');
+
+  ringEventsCache = await resolveRingEvents();
+
+  svg.innerHTML = '';
+  svg.appendChild(buildBodySilhouette());
+  svg.appendChild(el('circle', {cx:CX, cy:CY, r:R, class:'ring'}));
+  for (let year = 1500; year < 2000; year += 100){
+    const deg = angleForYear(year);
+    const p1 = pointOnRing(deg, R - 8);
+    const p2 = pointOnRing(deg, R + 8);
+    svg.appendChild(el('line', {x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, class:'tick'}));
+    const lp = pointOnRing(deg, R + 34);
+    const label = el('text', {x:lp.x, y:lp.y, class:'tick-label'});
+    label.textContent = year;
+    svg.appendChild(label);
+  }
+
+  const MIN_GAP_DEG = 5.5, STEP = 15;
+  let lastDeg = null, offset = 0;
+  ringEventsCache.forEach((ev) => {
+    const deg = angleForYear(ev.year);
+    if (lastDeg !== null && Math.min(Math.abs(deg - lastDeg), 360 - Math.abs(deg - lastDeg)) < MIN_GAP_DEG){
+      offset += STEP;
+    } else {
+      offset = 0;
+    }
+    lastDeg = deg;
+
+    const base = pointOnRing(deg, R);
+    const p = offset ? pointOnRing(deg, R + offset) : base;
+    if (offset) svg.appendChild(el('line', {x1:base.x, y1:base.y, x2:p.x, y2:p.y, class:'tick'}));
+
+    const glow = el('circle', {cx:p.x, cy:p.y, r:22, class:'node-glow', 'data-id':ev.id});
+    const hit  = el('circle', {cx:p.x, cy:p.y, r:26, class:'node-hit', 'data-id':ev.id});
+    const dot  = el('circle', {cx:p.x, cy:p.y, r:6, class:'node-dot', 'data-id':ev.id});
+    hit.addEventListener('click', () => openDetailSheet(ev));
+    svg.appendChild(glow);
+    svg.appendChild(dot);
+    svg.appendChild(hit);
+  });
+
+  if (ringEventsCache.length === 0){
+    centerLabel.innerHTML = `<div class="empty-msg tech">まだ何も記憶していません</div>`;
+    fab.textContent = '作成';
+  } else {
+    centerLabel.innerHTML = `<div class="hint">触れて、感じてください</div>`;
+    fab.textContent = '追加';
+  }
+}
+
+document.getElementById('fabBtn').addEventListener('click', openThemeSelect);
+
+/* ==================================================================
+   Screen 2 — テーマ選択画面
+   ================================================================== */
+let selectedThemeIds = [];
+let shuffledThemes = [];
+
+function openThemeSelect(){
+  selectedThemeIds = [];
+  shuffledThemes = shuffle(THEMES.filter(t => t.enabled));
+  renderThemeList();
+  updateThemeNextBtn();
+  showScreen('screen-theme');
+}
+
+function renderThemeList(){
+  const list = document.getElementById('themeList');
+  list.innerHTML = '';
+  shuffledThemes.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'theme-card' + (selectedThemeIds.includes(t.id) ? ' selected' : '');
+    card.innerHTML = `
+      <span class="t-check"></span>
+      <div class="t-name">${t.name}</div>
+      <div class="t-cat tech">${t.category}</div>
+      <div class="t-sense tech">${t.sensoryElements}</div>
+    `;
+    card.addEventListener('click', () => toggleTheme(t.id));
+    list.appendChild(card);
+  });
+}
+
+function toggleTheme(id){
+  const i = selectedThemeIds.indexOf(id);
+  if (i >= 0){
+    selectedThemeIds.splice(i, 1);
+  } else {
+    if (selectedThemeIds.length >= 5) return;
+    selectedThemeIds.push(id);
+  }
+  renderThemeList();
+  updateThemeNextBtn();
+}
+
+function updateThemeNextBtn(){
+  const btn = document.getElementById('themeNextBtn');
+  btn.classList.toggle('enabled', selectedThemeIds.length >= 1);
+}
+
+document.getElementById('themeNextBtn').addEventListener('click', () => {
+  if (selectedThemeIds.length < 1) return;
+  startPickup(selectedThemeIds);
+});
+document.getElementById('themeBackBtn').addEventListener('click', () => {
+  showScreen('screen-ring');
+});
+
+/* ==================================================================
+   Screen 3 — 歴史ピックアップ画面
+   ================================================================== */
+let pickup = { candidates: [], index: 0, inputIds: [] };
+
+async function startPickup(themeIds){
+  await Promise.all(themeIds.map(fetchEventsForTheme));
+  const ringIds = new Set(ringList.map(r => r.id));
+  let candidates = themeIds
+    .flatMap(t => eventCache.get(t) || [])
+    .filter(e => !ringIds.has(e.id));
+  candidates = shuffle(candidates);
+
+  pickup = { candidates, index: 0, inputIds: [] };
+  showScreen('screen-pickup');
+  renderPickupDots();
+  renderPickupCard();
+}
+
+function renderPickupDots(){
+  const wrap = document.getElementById('pickupDots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 10; i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < pickup.inputIds.length ? ' filled' : '');
+    wrap.appendChild(d);
+  }
+  document.getElementById('pickupNextBtn').classList.toggle('show', pickup.inputIds.length >= 1);
+}
+
+function renderPickupCard(){
+  const stage = document.getElementById('pickupStage');
+  stage.innerHTML = '';
+
+  if (pickup.index >= pickup.candidates.length){
+    finishPickup();
+    return;
+  }
+
+  const ev = pickup.candidates[pickup.index];
+  const next = pickup.candidates[pickup.index + 1];
+
+  if (next){
+    const behind = buildCard(next, true);
+    stage.appendChild(behind);
+  }
+  const front = buildCard(ev, false);
+  stage.appendChild(front);
+  attachDrag(front, ev);
+}
+
+function buildCard(ev, behind){
+  const card = document.createElement('div');
+  card.className = 'card' + (behind ? ' behind' : ' front');
+  card.innerHTML = `
+    <div class="card-year tech">${ev.year}年 &middot; ${ev.place}</div>
+    <div class="card-title">${ev.title}</div>
+    <div class="card-teaser">${ev.teaser}</div>
+    <div class="card-fact">${ev.factLayer}</div>
+    <div class="stamp remember tech">REMEMBER</div>
+    <div class="stamp skip tech">SKIP</div>
+  `;
+  return card;
+}
+
+function attachDrag(card, ev){
+  let startX = 0, startY = 0, dx = 0, dy = 0, dragging = false;
+  const stampRemember = card.querySelector('.stamp.remember');
+  const stampSkip = card.querySelector('.stamp.skip');
+
+  function updateStamps(){
+    const upness = Math.max(0, -dy) / 90;
+    const sideness = Math.abs(dx) / 110;
+    stampRemember.style.opacity = Math.min(1, upness);
+    stampSkip.style.opacity = dx < 0 ? 0 : Math.min(1, sideness);
+    if (dx < 0 && dy > -40){ // leftward discard also shown as skip via rotation cue
+      stampSkip.style.opacity = Math.min(1, Math.abs(dx) / 110);
+    }
+  }
+
+  function onDown(e){
+    dragging = true;
+    card.classList.remove('snap');
+    card.classList.add('dragging');
+    const p = e.touches ? e.touches[0] : e;
+    startX = p.clientX; startY = p.clientY;
+    if (card.setPointerCapture && e.pointerId !== undefined) card.setPointerCapture(e.pointerId);
+  }
+  function onMove(e){
+    if (!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    dx = p.clientX - startX;
+    dy = p.clientY - startY;
+    card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 18}deg)`;
+    updateStamps();
+  }
+  function onUp(){
+    if (!dragging) return;
+    dragging = false;
+    card.classList.remove('dragging');
+
+    const isUp = dy < -80 && Math.abs(dy) > Math.abs(dx);
+    const isSide = Math.abs(dx) > 100;
+    const isDown = dy > 100 && Math.abs(dy) > Math.abs(dx);
+
+    if (isUp){
+      flyCard(card, 0, -700, () => commit(ev.id, 'input'));
+    } else if (isSide || isDown){
+      const fx = isSide ? (dx > 0 ? 700 : -700) : 0;
+      const fy = isDown ? 500 : dy;
+      flyCard(card, fx, fy, () => commit(ev.id, 'discard'));
+    } else {
+      card.classList.add('snap');
+      card.style.transform = 'translate(0,0) rotate(0)';
+      dx = 0; dy = 0;
+    }
+  }
+
+  card.addEventListener('pointerdown', onDown);
+  card.addEventListener('pointermove', onMove);
+  card.addEventListener('pointerup', onUp);
+  card.addEventListener('pointercancel', onUp);
+
+  card._commitInput = () => flyCard(card, 0, -700, () => commit(ev.id, 'input'));
+  card._commitDiscard = () => flyCard(card, -700, 100, () => commit(ev.id, 'discard'));
+}
+
+function flyCard(card, tx, ty, done){
+  card.classList.add('fly');
+  card.style.transform = `translate(${tx}px, ${ty}px) rotate(${tx / 12}deg)`;
+  setTimeout(done, 380);
+}
+
+function commit(eventId, kind){
+  if (kind === 'input') pickup.inputIds.push(eventId);
+  pickup.index += 1;
+  renderPickupDots();
+  renderPickupCard();
+}
+
+document.getElementById('pickupNextBtn').addEventListener('click', finishPickup);
+document.getElementById('fallbackSkip').addEventListener('click', () => {
+  const card = document.querySelector('.card.front');
+  if (card && card._commitDiscard) card._commitDiscard();
+});
+document.getElementById('fallbackKeep').addEventListener('click', () => {
+  const card = document.querySelector('.card.front');
+  if (card && card._commitInput) card._commitInput();
+});
+
+function finishPickup(){
+  if (pickup.inputIds.length > 0){
+    const now = new Date().toISOString();
+    pickup.inputIds.forEach(id => ringList.push({ id, addedAt: now }));
+    saveRingList();
+  }
+  showScreen('screen-ring');
+  renderRing();
+}
+
+/* ==================================================================
+   shared — event detail sheet
+   ================================================================== */
+const sheet = document.getElementById('sheet');
+const scrim = document.getElementById('scrim');
+let activeEventId = null;
+
+function openDetailSheet(ev){
+  activeEventId = ev.id;
+  document.getElementById('detailYear').textContent = ev.year + '年';
+  document.getElementById('detailTeaser').textContent = ev.teaser;
+  document.getElementById('detailPlace').textContent = ev.place;
+  document.getElementById('detailBody').innerHTML = `
+    <p><span class="tag">事実レイヤー</span>${ev.factLayer}</p>
+    <p><span class="tag">具体的なマテリアル</span>${ev.material}</p>
+    <p><span class="tag">体感レイヤー</span>${ev.sensation}</p>
+    <p><span class="tag">選定理由</span>${ev.rationale}</p>
+  `;
+
+  svg.querySelectorAll('.node-dot').forEach(d => d.classList.remove('active'));
+  svg.querySelectorAll('.node-glow').forEach(g => g.classList.remove('active'));
+  const dot = svg.querySelector(`.node-dot[data-id="${ev.id}"]`);
+  const glow = svg.querySelector(`.node-glow[data-id="${ev.id}"]`);
+  if (dot){ dot.classList.add('active'); dot.classList.add('visited'); }
+  if (glow) glow.classList.add('active');
+
+  sheet.classList.add('open');
+  scrim.classList.add('show');
+}
+
+function closeSheet(){
+  sheet.classList.remove('open');
+  scrim.classList.remove('show');
+  if (activeEventId){
+    const glow = svg.querySelector(`.node-glow[data-id="${activeEventId}"]`);
+    const dot = svg.querySelector(`.node-dot[data-id="${activeEventId}"]`);
+    if (glow) glow.classList.remove('active');
+    if (dot) dot.classList.remove('active');
+  }
+  activeEventId = null;
+}
+scrim.addEventListener('click', closeSheet);
+
+document.getElementById('deleteBtn').addEventListener('click', () => {
+  if (!activeEventId) return;
+  ringList = ringList.filter(r => r.id !== activeEventId);
+  saveRingList();
+  closeSheet();
+  renderRing();
+});
+
+/* ==================================================================
+   init
+   ================================================================== */
+(async function init(){
+  applyPalette(loadPalette());
+  await loadThemes();
+  ringList = loadRingList();
+  await renderRing();
+})();
+</script>
+</body>
+</html>

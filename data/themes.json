@@ -1,0 +1,362 @@
+[
+  {
+    "id": "ice",
+    "name": "氷",
+    "category": "自然素材の歴史",
+    "reason": "先史〜現代まで連続した年表があり、感覚描写との相性が良い",
+    "sensoryElements": "冷たさ・硬さ・溶解",
+    "enabled": true
+  },
+  {
+    "id": "salt",
+    "name": "塩",
+    "category": "自然素材の歴史",
+    "reason": "貿易史としての合意性が高く、感覚要素と直結する",
+    "sensoryElements": "味覚・粒子感・乾燥",
+    "enabled": true
+  },
+  {
+    "id": "honey",
+    "name": "蜂蜜",
+    "category": "自然素材の歴史",
+    "reason": "採集〜養蜂〜産業化まで線条的な歴史があり、当事者性がほぼない",
+    "sensoryElements": "粘度・甘さ・温度",
+    "enabled": true
+  },
+  {
+    "id": "soap",
+    "name": "石鹸",
+    "category": "自然素材の歴史",
+    "reason": "古代メソポタミア〜産業革命〜現代の合成洗剤まで年表の合意性が高い",
+    "sensoryElements": "泡・滑らかさ・香り",
+    "enabled": true
+  },
+  {
+    "id": "silk",
+    "name": "絹",
+    "category": "工芸・染色文化史",
+    "reason": "養蚕の起源から交易・産業化までの線条性が明確",
+    "sensoryElements": "光沢・滑らかさ・軽さ",
+    "enabled": true
+  },
+  {
+    "id": "dye",
+    "name": "染料（藍・紅など）",
+    "category": "工芸・染色文化史",
+    "reason": "天然染料から合成染料への転換という技術史の合意性が高い",
+    "sensoryElements": "色移り・匂い・染み込み",
+    "enabled": true
+  },
+  {
+    "id": "ceramics",
+    "name": "陶磁器",
+    "category": "工芸・染色文化史",
+    "reason": "焼成技術と交易路の発展が線条的で、当事者性が低い",
+    "sensoryElements": "質感・重さ・冷たさ",
+    "enabled": true
+  },
+  {
+    "id": "candle",
+    "name": "蝋燭・灯りの歴史",
+    "category": "工芸・染色文化史",
+    "reason": "灯火手段の変遷（獣脂→蜜蝋→石油→電気）が明確な技術史",
+    "sensoryElements": "熱・溶解・揺らめき",
+    "enabled": true
+  },
+  {
+    "id": "paper",
+    "name": "紙",
+    "category": "精密技術・光学史",
+    "reason": "発明・伝播・産業化の流れが明確",
+    "sensoryElements": "繊維・重さ・湿度",
+    "enabled": true
+  },
+  {
+    "id": "glass",
+    "name": "ガラス",
+    "category": "精密技術・光学史",
+    "reason": "透明性・硬さ・脆さなど感覚描写に富む物質特性",
+    "sensoryElements": "透明感・硬さ・脆さ",
+    "enabled": true
+  },
+  {
+    "id": "clock",
+    "name": "時計・時間の計測",
+    "category": "精密技術・光学史",
+    "reason": "日時計〜機械式〜電子式まで技術的線条性が明確",
+    "sensoryElements": "リズム・振動・金属音",
+    "enabled": true
+  },
+  {
+    "id": "map",
+    "name": "地図",
+    "category": "精密技術・光学史",
+    "reason": "測量技術・世界観の変遷が線条的",
+    "sensoryElements": "起伏・触覚的な凹凸",
+    "enabled": true
+  },
+  {
+    "id": "glasses",
+    "name": "眼鏡・レンズ",
+    "category": "精密技術・光学史",
+    "reason": "視覚矯正技術の発明・改良史が明確で当事者性がない",
+    "sensoryElements": "透明度・軽さ・圧迫感",
+    "enabled": true
+  },
+  {
+    "id": "mirror",
+    "name": "鏡",
+    "category": "精密技術・光学史",
+    "reason": "金属鏡〜ガラス鏡〜銀引き鏡という合意性の高い技術史",
+    "sensoryElements": "冷たさ・滑らかさ・映り込み",
+    "enabled": true
+  },
+  {
+    "id": "coffee",
+    "name": "コーヒー",
+    "category": "食文化・嗜好品の貿易史",
+    "reason": "起源伝説から国際貿易・産業化まで線条性がある",
+    "sensoryElements": "香り・温度・苦味",
+    "enabled": true
+  },
+  {
+    "id": "tea",
+    "name": "茶",
+    "category": "食文化・嗜好品の貿易史",
+    "reason": "喫茶文化の伝播・産業化の年表がコーヒーと同様に明確",
+    "sensoryElements": "香り・温度・渋み",
+    "enabled": true
+  },
+  {
+    "id": "sugar",
+    "name": "砂糖",
+    "category": "食文化・嗜好品の貿易史",
+    "reason": "精製技術と貿易路の拡大が線条的（プランテーション史は要注意点として留意）",
+    "sensoryElements": "甘さ・結晶感・粘度",
+    "enabled": true
+  },
+  {
+    "id": "spice",
+    "name": "香辛料",
+    "category": "食文化・嗜好品の貿易史",
+    "reason": "交易路（香辛料貿易）の年表に合意性が高い",
+    "sensoryElements": "香り・辛味・刺激",
+    "enabled": true
+  },
+  {
+    "id": "cacao",
+    "name": "カカオ・チョコレート",
+    "category": "食文化・嗜好品の貿易史",
+    "reason": "飲料から加工食品への転換が明確な技術・産業史",
+    "sensoryElements": "苦味・口どけ・香り",
+    "enabled": true
+  },
+  {
+    "id": "wine",
+    "name": "ワイン・醸造酒",
+    "category": "食文化・嗜好品の貿易史",
+    "reason": "醸造技術の発展史が線条的",
+    "sensoryElements": "香り・とろみ・温度",
+    "enabled": true
+  },
+  {
+    "id": "perfume",
+    "name": "香水・香料",
+    "category": "香り・装飾文化史",
+    "reason": "貿易史として線条性があり、感覚（匂い）がテーマと直結する",
+    "sensoryElements": "香り・揮発感",
+    "enabled": true
+  },
+  {
+    "id": "navigation",
+    "name": "航海術・羅針盤",
+    "category": "交通・交易インフラの歴史",
+    "reason": "天文航法〜磁石コンパス〜GPSへの転換が明確（探検史に伴う要注意点は個別に確認）",
+    "sensoryElements": "揺れ・潮風・金属の冷たさ",
+    "enabled": true
+  },
+  {
+    "id": "railway",
+    "name": "鉄道",
+    "category": "交通・交易インフラの歴史",
+    "reason": "蒸気機関〜電化という産業技術史の合意性が高い",
+    "sensoryElements": "振動・熱・金属音",
+    "enabled": true
+  },
+  {
+    "id": "currency",
+    "name": "貨幣・硬貨の歴史",
+    "category": "交通・交易インフラの歴史",
+    "reason": "物々交換〜硬貨〜紙幣〜電子化という線条性が明確",
+    "sensoryElements": "重さ・冷たさ・質感",
+    "enabled": true
+  },
+  {
+    "id": "cards",
+    "name": "トランプ・カード遊び",
+    "category": "遊びと娯楽の歴史",
+    "reason": "中国の紙牌に起源を持ち、中東を経てヨーロッパへ伝来、量産印刷化から現代のカードゲームまで線条性が明確",
+    "sensoryElements": "紙の質感・箔の光沢・切る音",
+    "enabled": true
+  },
+  {
+    "id": "fireworks",
+    "name": "花火",
+    "category": "遊びと娯楽の歴史",
+    "reason": "火薬の祝祭利用からヨーロッパでの発展、大規模化・電子制御化まで技術史として線条的",
+    "sensoryElements": "熱・硫黄の匂い・振動",
+    "enabled": true
+  },
+  {
+    "id": "circus",
+    "name": "近代サーカス・見世物興行",
+    "category": "遊びと娯楽の歴史",
+    "reason": "18世紀後半の近代サーカス成立から巡業文化・現代の興行まで年表の合意性が高い",
+    "sensoryElements": "布の匂い・おがくず・綱の張り",
+    "enabled": true
+  },
+  {
+    "id": "amusement_park",
+    "name": "遊園地・遊具（メリーゴーランド・観覧車等）",
+    "category": "遊びと娯楽の歴史",
+    "reason": "19世紀末の遊園地成立、観覧車の発明を起点に現代のテーマパークまで線条的",
+    "sensoryElements": "金属の冷たさ・回転の遠心力・油の匂い",
+    "enabled": true
+  },
+  {
+    "id": "chess",
+    "name": "将棋・チェス（盤上遊戯）",
+    "category": "遊びと娯楽の歴史",
+    "reason": "近世の駒・ルールの標準化から近代の競技化・コンピュータ対戦まで線条性が明確",
+    "sensoryElements": "木や象牙の質感・駒を置く音・重さ",
+    "enabled": true
+  },
+  {
+    "id": "bridge",
+    "name": "橋（石橋〜鉄橋〜吊り橋）",
+    "category": "土木・公共インフラの歴史",
+    "reason": "石造アーチから鉄橋、近代の吊り橋・斜張橋まで構造技術として線条的",
+    "sensoryElements": "石の重さ・鉄の冷たさ・張力",
+    "enabled": true
+  },
+  {
+    "id": "water_supply",
+    "name": "上下水道",
+    "category": "土木・公共インフラの歴史",
+    "reason": "近代水道の整備から下水処理技術の発展まで、公衆衛生史として合意性が高い",
+    "sensoryElements": "水の湿り気・石管の質感・匂い",
+    "enabled": true
+  },
+  {
+    "id": "lighthouse",
+    "name": "灯台",
+    "category": "土木・公共インフラの歴史",
+    "reason": "灯油灯〜フレネルレンズ〜電化・自動化まで、航海安全のための技術史として線条的",
+    "sensoryElements": "光の点滅・潮風・金属の冷たさ",
+    "enabled": true
+  },
+  {
+    "id": "tunnel",
+    "name": "トンネル",
+    "category": "土木・公共インフラの歴史",
+    "reason": "掘削技術（手掘り〜火薬〜シールド工法）の発展が明確な土木技術史",
+    "sensoryElements": "湿った岩肌・暗さ・反響音",
+    "enabled": true
+  },
+  {
+    "id": "printing",
+    "name": "印刷・出版",
+    "category": "知の伝達の歴史",
+    "reason": "活版印刷の確立から量産化・電子化まで、技術史として線条性が明確",
+    "sensoryElements": "インクの匂い・紙の重み・圧力",
+    "enabled": true
+  },
+  {
+    "id": "postal",
+    "name": "郵便制度",
+    "category": "知の伝達の歴史",
+    "reason": "近世の飛脚・駅逓制度から近代郵便・郵便切手の確立まで合意性が高い",
+    "sensoryElements": "封蝋の熱・紙の質感・待つ緊張感",
+    "enabled": true
+  },
+  {
+    "id": "newspaper",
+    "name": "新聞",
+    "category": "知の伝達の歴史",
+    "reason": "定期刊行の確立から大衆化・電子化まで、情報伝達の技術史として線条的",
+    "sensoryElements": "インクの匂い・紙のざらつき・湿り気",
+    "enabled": true
+  },
+  {
+    "id": "library",
+    "name": "図書館（公共図書館制度）",
+    "category": "知の伝達の歴史",
+    "reason": "近代公共図書館制度の確立から電子図書館化まで、知の保存・共有史として線条的",
+    "sensoryElements": "紙の匂い・静けさの重み・埃っぽさ",
+    "enabled": true
+  },
+  {
+    "id": "farm_tools",
+    "name": "農具の進化（鋤・鍬〜農業機械）",
+    "category": "農業・農具の歴史",
+    "reason": "手道具から畜力農具、内燃機関式農業機械までの発展が線条的",
+    "sensoryElements": "土の重さ・木や鉄の質感・振動",
+    "enabled": true
+  },
+  {
+    "id": "agricultural_revolution",
+    "name": "農業革命（輪作・肥料・機械化）",
+    "category": "農業・農具の歴史",
+    "reason": "近世の輪作農法から化学肥料・機械化農業までの技術史として合意性が高い",
+    "sensoryElements": "土の匂い・湿り気・粒の感触",
+    "enabled": true
+  },
+  {
+    "id": "dairy",
+    "name": "酪農・乳製品",
+    "category": "農業・農具の歴史",
+    "reason": "搾乳・保存技術から近代の工業的酪農までの発展が明確",
+    "sensoryElements": "乳のとろみ・温かさ・匂い",
+    "enabled": true
+  },
+  {
+    "id": "rice_farming",
+    "name": "稲作・水田耕作",
+    "category": "農業・農具の歴史",
+    "reason": "田植え・灌漑技術から機械化・品種改良までの発展が線条的",
+    "sensoryElements": "泥の冷たさ・水の重み・粒の質感",
+    "enabled": true
+  },
+  {
+    "id": "keyboard_instruments",
+    "name": "鍵盤楽器（チェンバロ〜ピアノ）の発展",
+    "category": "音楽・楽器製作の歴史",
+    "reason": "撥弦式から打弦式（ピアノ）への発展、近代化までの技術史として線条的",
+    "sensoryElements": "鍵の重み・木の質感・振動",
+    "enabled": true
+  },
+  {
+    "id": "string_instruments",
+    "name": "弦楽器製作（ヴァイオリン系）",
+    "category": "音楽・楽器製作の歴史",
+    "reason": "製作技法の確立から量産化までの職人技術史として合意性が高い",
+    "sensoryElements": "木目の質感・弦の張力・松脂の匂い",
+    "enabled": true
+  },
+  {
+    "id": "wind_instruments",
+    "name": "管楽器の発展",
+    "category": "音楽・楽器製作の歴史",
+    "reason": "素材・キー機構の発展（木管〜金管の近代化）が線条的な技術史",
+    "sensoryElements": "金属の冷たさ・息の湿り気・振動",
+    "enabled": true
+  },
+  {
+    "id": "recording",
+    "name": "録音・再生技術",
+    "category": "音楽・楽器製作の歴史",
+    "reason": "蓄音機の発明から電気録音・デジタル化までの技術史として線条性が明確",
+    "sensoryElements": "針の振動・盤面の質感・かすかな雑音",
+    "enabled": true
+  }
+]
