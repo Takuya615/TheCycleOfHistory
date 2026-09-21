@@ -125,7 +125,7 @@
   .ring{fill:none;stroke:var(--instrument);stroke-width:1;opacity:.55;}
   .body-silhouette{opacity:.16;}
   .body-silhouette circle{fill:var(--instrument-dim);}
-  .body-silhouette line{stroke:var(--instrument-dim);stroke-width:22;stroke-linecap:round;}
+  .body-silhouette line{stroke:var(--instrument-dim);stroke-width:34;stroke-linecap:round;}
   .tick{stroke:var(--instrument-dim);stroke-width:1;}
   .tick-label{fill:var(--muted);font-size:16px;text-anchor:middle;dominant-baseline:middle;}
   .node-hit{fill:transparent;cursor:pointer;}
@@ -147,6 +147,10 @@
     filter:blur(6px);
   }
   .node-glow.active{opacity:.85;transform:scale(1);}
+  .node-icon{
+    font-size:20px;pointer-events:none;user-select:none;
+    transition:font-size .3s ease;
+  }
   @keyframes breathe{
     0%,100%{opacity:.75;} 50%{opacity:1;}
   }
@@ -232,75 +236,64 @@
   .secondary-btn:active{border-color:var(--instrument);}
   .secondary-btn.tech{font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;}
 
-  /* ---------- pickup screen ---------- */
-  .pickup-header{
-    flex:0 0 auto;padding:calc(env(safe-area-inset-top,0px) + 18px) 20px 4px;
-    display:flex;flex-direction:column;align-items:center;gap:10px;
-  }
-  .dots{display:flex;gap:7px;}
+  /* ---------- pickup screen (年代ごとカード選択) ---------- */
+  .dots{flex:0 0 auto;display:flex;justify-content:center;gap:7px;padding:12px 20px 0;}
   .dot{width:7px;height:7px;border-radius:50%;background:var(--instrument-dim);transition:background .3s ease;}
   .dot.filled{background:var(--ember);}
-  .pickup-next{
-    appearance:none;border:1px solid var(--ember-dim);background:transparent;
-    color:var(--ember);font-family:inherit;font-size:11px;letter-spacing:.08em;
-    padding:6px 16px;border-radius:999px;cursor:pointer;
-    opacity:0;pointer-events:none;transition:opacity .25s ease;
-  }
-  .pickup-next.show{opacity:1;pointer-events:auto;}
-  .pickup-next.tech{font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;}
+  .dot.current{background:var(--ember-dim);}
 
   .pickup-stage{
-    flex:1 1 auto;position:relative;min-height:0;
-    display:flex;align-items:center;justify-content:center;
-    padding:10px 24px;
+    flex:1 1 auto;min-height:0;
+    display:flex;align-items:center;
+    gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;
+    padding:14px 20px calc(env(safe-area-inset-bottom,0px) + 10px);
+    cursor:grab;
   }
-  .pickup-empty{color:var(--muted);font-size:13px;letter-spacing:.04em;text-align:center;padding:0 30px;}
+  .pickup-stage:active{cursor:grabbing;}
+  .pickup-empty{
+    margin:0 auto;color:var(--muted);font-size:13px;letter-spacing:.04em;
+    text-align:center;padding:0 30px;
+  }
 
-  .card{
-    position:absolute;width:min(84vw,340px);max-height:74vh;
+  .century-card{
+    flex:0 0 auto;width:min(78vw,300px);max-height:100%;
+    scroll-snap-align:center;
     background:linear-gradient(180deg, var(--skin) 0%, var(--skin-2) 100%);
     color:var(--ink);border-radius:20px;
     box-shadow:0 16px 40px rgba(0,0,0,.4);
-    padding:24px 22px;overflow-y:auto;-webkit-overflow-scrolling:touch;
-    touch-action:none;cursor:grab;user-select:none;
+    padding:22px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    cursor:pointer;user-select:none;
+    border:3px solid transparent;
+    transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next","YuGothic",sans-serif;
   }
-  .card.behind{
-    transform:scale(.94) translateY(10px);
-    box-shadow:0 8px 24px rgba(0,0,0,.28);
-    z-index:1;pointer-events:none;filter:brightness(.9);
+  .century-card.selected{
+    border-color:var(--ember);
+    transform:translateY(-6px);
+    box-shadow:0 20px 44px rgba(224,136,80,.28);
   }
-  .card.front{z-index:2;}
-  .card.dragging{transition:none;cursor:grabbing;}
-  .card.snap{transition:transform .35s cubic-bezier(.19,1,.22,1);}
-  .card.fly{transition:transform .4s ease, opacity .4s ease;opacity:0;}
+  .century-card .c-check{
+    float:right;width:20px;height:20px;border-radius:50%;
+    border:1.5px solid rgba(36,27,20,.3);
+  }
+  .century-card.selected .c-check{
+    background:var(--ember);border-color:var(--ember);
+  }
 
   .card-year{font-size:11px;letter-spacing:.12em;color:var(--ember-dim);}
   .card-title{font-size:17px;font-weight:600;margin:5px 0 10px;line-height:1.5;}
   .card-teaser{font-size:14px;line-height:1.75;color:#4a3d30;margin-bottom:12px;}
   .card-place{font-size:11px;color:var(--muted-warm);margin-bottom:12px;}
   .card-fact{font-size:13px;line-height:1.75;color:#4a3d30;border-top:1px solid rgba(36,27,20,.15);padding-top:12px;}
+  .card-icon{font-size:34px;line-height:1;margin-bottom:2px;}
+  .card-ba{border-top:1px solid rgba(36,27,20,.15);padding-top:12px;}
+  .card-ba p{font-size:13px;line-height:1.7;color:#4a3d30;margin:0 0 10px;}
+  .card-ba p:last-child{margin-bottom:0;}
+  .ba-tag{display:block;font-size:10px;letter-spacing:.14em;color:var(--ember-dim);margin-bottom:3px;}
 
-  .stamp{
-    position:absolute;top:20px;font-size:13px;letter-spacing:.2em;
-    padding:6px 14px;border-radius:8px;border:2.5px solid;
-    opacity:0;transform:rotate(-14deg);font-family:"Hiragino Kaku Gothic ProN",sans-serif;
-    pointer-events:none;
-  }
-  .stamp.remember{left:18px;color:#3f8f5f;border-color:#3f8f5f;}
-  .stamp.skip{right:18px;color:#b0503f;border-color:#b0503f;transform:rotate(14deg);}
-
-  .pickup-fallback{
-    flex:0 0 auto;display:flex;justify-content:center;gap:26px;
-    padding:8px 20px calc(env(safe-area-inset-bottom,0px) + 22px);
-  }
-  .pill-btn{
-    appearance:none;border:1px solid var(--instrument-dim);background:var(--void-2);
-    color:var(--muted);font-family:"Hiragino Kaku Gothic ProN",sans-serif;
-    font-size:12px;letter-spacing:.06em;padding:10px 20px;border-radius:999px;cursor:pointer;
-  }
-  .pill-btn.skip{color:#c98f7f;}
-  .pill-btn.keep{color:var(--ember);}
+  .pickup-next-fab{opacity:.35;pointer-events:none;}
+  .pickup-next-fab.enabled{opacity:1;pointer-events:auto;}
 
   /* ---------- scrim + sheet (event detail) ---------- */
   .scrim{
@@ -335,9 +328,19 @@
   .detail-teaser{
     font-size:21px;line-height:1.55;margin:6px 0 8px;color:var(--ink);
   }
+  .detail-person{
+    display:flex;align-items:center;gap:12px;
+    margin:8px 0 8px;
+  }
+  .detail-person-icon{font-size:34px;line-height:1;}
+  .detail-person-name{font-size:21px;line-height:1.4;color:var(--ink);font-weight:600;}
+  .detail-icon-reason{
+    font-size:12px;line-height:1.6;color:var(--ink);
+    margin:-2px 0 14px;
+  }
   .detail-place{
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
-    font-size:11.5px;color:var(--muted-warm);letter-spacing:.03em;margin-bottom:16px;
+    font-size:11.5px;color:var(--ink);letter-spacing:.03em;margin-bottom:16px;
   }
   .detail-body p{
     margin:0 0 16px;font-size:15px;line-height:1.85;
@@ -424,7 +427,7 @@
     </div>
   </div>
 
-  <!-- ============ Screen 2: テーマ選択画面 ============ -->
+  <!-- ============ Screen 2: テーマ選択画面（一旦コメントアウト） ============
   <div class="screen" id="screen-theme">
     <header>
       <div class="eyebrow tech">テーマを選ぶ</div>
@@ -436,17 +439,18 @@
       <button class="primary-btn tech" id="themeNextBtn">次へ</button>
     </div>
   </div>
+  ============================================================================ -->
 
-  <!-- ============ Screen 3: 歴史ピックアップ画面 ============ -->
+  <!-- ============ Screen 3: 歴史ピックアップ画面（年代ごとカード選択） ============ -->
   <div class="screen" id="screen-pickup">
-    <div class="pickup-header">
-      <div class="dots" id="pickupDots"></div>
-      <button class="pickup-next tech" id="pickupNextBtn">次へ ›</button>
-    </div>
+    <header>
+      <div class="eyebrow tech" id="pickupEyebrow">1 / 5</div>
+      <div class="headline tech" id="pickupHeadline">1500年代</div>
+    </header>
+    <div class="dots" id="pickupDots"></div>
     <div class="pickup-stage" id="pickupStage"></div>
-    <div class="pickup-fallback">
-      <button class="pill-btn skip tech" id="fallbackSkip">✕ 興味ない</button>
-      <button class="pill-btn keep tech" id="fallbackKeep">△ 記憶する</button>
+    <div class="fab-wrap">
+      <button class="fab tech pickup-next-fab" id="pickupNextBtn">次へ</button>
     </div>
   </div>
 
@@ -455,6 +459,11 @@
   <div class="sheet" id="sheet" role="dialog" aria-modal="true">
     <div class="sheet-handle"></div>
     <div class="detail-eyebrow tech" id="detailYear"></div>
+    <div class="detail-person" id="detailPerson">
+      <span class="detail-person-icon" id="detailPersonIcon"></span>
+      <span class="detail-person-name" id="detailPersonName"></span>
+    </div>
+    <div class="detail-icon-reason tech" id="detailIconReason"></div>
     <div class="detail-teaser" id="detailTeaser"></div>
     <div class="detail-place tech" id="detailPlace"></div>
     <div class="detail-body" id="detailBody"></div>
@@ -608,13 +617,20 @@ function buildBodySilhouette(){
   // loosely within the ring. It's meant only as ambient texture suggesting "a body
   // sits behind this circle" — it must never label or imply which exact point maps
   // to which exact joint; that mapping stays entirely up to the user's imagination.
+  // The two arm tips are the one deliberate exception: they're pinned to the ring's
+  // 1600 (screen-right) and 1900 (screen-left) positions, as if the figure faces the
+  // viewer with arms spread along the circle (anatomical left hand → screen-right → 1600,
+  // anatomical right hand → screen-left → 1900).
   const g = el('g', {class:'body-silhouette'});
-  g.appendChild(el('circle', {cx:280, cy:145, r:24}));                  // head
-  g.appendChild(el('line', {x1:280, y1:172, x2:280, y2:300}));          // torso
-  g.appendChild(el('line', {x1:280, y1:185, x2:125, y2:150}));          // left arm
-  g.appendChild(el('line', {x1:280, y1:185, x2:435, y2:150}));          // right arm
-  g.appendChild(el('line', {x1:280, y1:300, x2:165, y2:455}));          // left leg
-  g.appendChild(el('line', {x1:280, y1:300, x2:395, y2:455}));          // right leg
+  const shoulderY = 185;
+  const leftSideHand = pointOnRing(angleForYear(1900), R);
+  const rightSideHand = pointOnRing(angleForYear(1600), R);
+  g.appendChild(el('circle', {cx:280, cy:145, r:30}));                                                    // head
+  g.appendChild(el('line', {x1:280, y1:172, x2:280, y2:300}));                                             // torso
+  g.appendChild(el('line', {x1:280, y1:shoulderY, x2:leftSideHand.x, y2:leftSideHand.y}));                 // left arm → 1900
+  g.appendChild(el('line', {x1:280, y1:shoulderY, x2:rightSideHand.x, y2:rightSideHand.y}));               // right arm → 1600
+  g.appendChild(el('line', {x1:280, y1:300, x2:165, y2:455}));                                             // left leg
+  g.appendChild(el('line', {x1:280, y1:300, x2:395, y2:455}));                                             // right leg
   return g;
 }
 
@@ -638,7 +654,7 @@ async function renderRing(){
     svg.appendChild(label);
   }
 
-  const MIN_GAP_DEG = 5.5, STEP = 15;
+  const MIN_GAP_DEG = 9, STEP = 15;
   let lastDeg = null, offset = 0;
   ringEventsCache.forEach((ev) => {
     const deg = angleForYear(ev.year);
@@ -653,12 +669,18 @@ async function renderRing(){
     const p = offset ? pointOnRing(deg, R + offset) : base;
     if (offset) svg.appendChild(el('line', {x1:base.x, y1:base.y, x2:p.x, y2:p.y, class:'tick'}));
 
-    const glow = el('circle', {cx:p.x, cy:p.y, r:22, class:'node-glow', 'data-id':ev.id});
-    const hit  = el('circle', {cx:p.x, cy:p.y, r:26, class:'node-hit', 'data-id':ev.id});
-    const dot  = el('circle', {cx:p.x, cy:p.y, r:6, class:'node-dot', 'data-id':ev.id});
+    const hasIcon = !!ev.icon;
+    const glow = el('circle', {cx:p.x, cy:p.y, r: hasIcon ? 24 : 22, class:'node-glow', 'data-id':ev.id});
+    const hit  = el('circle', {cx:p.x, cy:p.y, r: hasIcon ? 26 : 26, class:'node-hit', 'data-id':ev.id});
+    const dot  = el('circle', {cx:p.x, cy:p.y, r: hasIcon ? 16 : 6, class:'node-dot', 'data-id':ev.id});
     hit.addEventListener('click', () => openDetailSheet(ev));
     svg.appendChild(glow);
     svg.appendChild(dot);
+    if (hasIcon){
+      const icon = el('text', {x:p.x, y:p.y, class:'node-icon', 'data-id':ev.id, 'text-anchor':'middle', 'dominant-baseline':'central'});
+      icon.textContent = ev.icon;
+      svg.appendChild(icon);
+    }
     svg.appendChild(hit);
   });
 
@@ -671,11 +693,12 @@ async function renderRing(){
   }
 }
 
-document.getElementById('fabBtn').addEventListener('click', openThemeSelect);
+document.getElementById('fabBtn').addEventListener('click', startCenturyPickup);
 
 /* ==================================================================
-   Screen 2 — テーマ選択画面
-   ================================================================== */
+   Screen 2 — テーマ選択画面（一旦コメントアウト。ワークフロー変更により
+   「作成」タップ後はテーマ選択を経由せず、直接カードピックアップ画面へ進む）
+   ==================================================================
 let selectedThemeIds = [];
 let shuffledThemes = [];
 
@@ -728,163 +751,142 @@ document.getElementById('themeNextBtn').addEventListener('click', () => {
 document.getElementById('themeBackBtn').addEventListener('click', () => {
   showScreen('screen-ring');
 });
+   ================================================================== */
 
 /* ==================================================================
-   Screen 3 — 歴史ピックアップ画面
+   Screen 3 — 歴史ピックアップ画面（年代ごとカード選択）
+   1500/1600/1700/1800/1900年代の5ステップ。各年代でカードを横スクロール
+   表示し、1つ以上選択したら「次へ」で次の年代へ。最後の年代の後はホーム
+   （円環UI画面）に戻り、選択したカードを円環に反映する。
    ================================================================== */
-let pickup = { candidates: [], index: 0, inputIds: [] };
+const CENTURIES = [1500, 1600, 1700, 1800, 1900];
+const DEMO_THEME_IDS = ['greatman']; // デモ表示は「超有名な偉人」16人で行う
 
-async function startPickup(themeIds){
-  await Promise.all(themeIds.map(fetchEventsForTheme));
+let centuryPickup = { byCentury: {}, index: 0, selections: {} };
+
+async function startCenturyPickup(){
+  await Promise.all(DEMO_THEME_IDS.map(fetchEventsForTheme));
   const ringIds = new Set(ringList.map(r => r.id));
-  let candidates = themeIds
+  const candidates = DEMO_THEME_IDS
     .flatMap(t => eventCache.get(t) || [])
     .filter(e => !ringIds.has(e.id));
-  candidates = shuffle(candidates);
 
-  pickup = { candidates, index: 0, inputIds: [] };
+  const byCentury = {};
+  const selections = {};
+  CENTURIES.forEach(c => { byCentury[c] = []; selections[c] = new Set(); });
+  candidates.forEach(ev => {
+    const century = Math.floor(ev.year / 100) * 100;
+    if (byCentury[century]) byCentury[century].push(ev);
+  });
+  CENTURIES.forEach(c => byCentury[c].sort((a, b) => a.year - b.year));
+
+  centuryPickup = { byCentury, index: 0, selections };
   showScreen('screen-pickup');
-  renderPickupDots();
-  renderPickupCard();
+  renderCenturyPickup();
 }
 
-function renderPickupDots(){
-  const wrap = document.getElementById('pickupDots');
-  wrap.innerHTML = '';
-  for (let i = 0; i < 10; i++){
+function renderCenturyPickup(){
+  const century = CENTURIES[centuryPickup.index];
+  const events = centuryPickup.byCentury[century] || [];
+  const selected = centuryPickup.selections[century];
+
+  document.getElementById('pickupEyebrow').textContent = `${centuryPickup.index + 1} / ${CENTURIES.length}`;
+  document.getElementById('pickupHeadline').textContent = `${century}年代`;
+
+  const dots = document.getElementById('pickupDots');
+  dots.innerHTML = '';
+  CENTURIES.forEach((c, i) => {
     const d = document.createElement('div');
-    d.className = 'dot' + (i < pickup.inputIds.length ? ' filled' : '');
-    wrap.appendChild(d);
-  }
-  document.getElementById('pickupNextBtn').classList.toggle('show', pickup.inputIds.length >= 1);
-}
+    d.className = 'dot' + (i < centuryPickup.index ? ' filled' : i === centuryPickup.index ? ' current' : '');
+    dots.appendChild(d);
+  });
 
-function renderPickupCard(){
   const stage = document.getElementById('pickupStage');
   stage.innerHTML = '';
-
-  if (pickup.index >= pickup.candidates.length){
-    finishPickup();
-    return;
+  if (events.length === 0){
+    stage.innerHTML = `<div class="pickup-empty tech">この年代のカードはまだありません</div>`;
+  } else {
+    events.forEach(ev => {
+      const card = document.createElement('div');
+      card.className = 'century-card' + (selected.has(ev.id) ? ' selected' : '');
+      card.innerHTML = (ev.before !== undefined) ? `
+        <span class="c-check"></span>
+        <div class="card-icon">${ev.icon || ''}</div>
+        <div class="card-year tech">${ev.year}年</div>
+        <div class="card-title">${ev.title}</div>
+        <div class="card-teaser">${ev.teaser}</div>
+        <div class="card-ba">
+          <p><span class="ba-tag tech">Before</span>${ev.before}</p>
+          <p><span class="ba-tag tech">After</span>${ev.after}</p>
+        </div>
+      ` : `
+        <span class="c-check"></span>
+        <div class="card-year tech">${ev.year}年 &middot; ${ev.place}</div>
+        <div class="card-title">${ev.title}</div>
+        <div class="card-teaser">${ev.teaser}</div>
+        <div class="card-fact">${ev.factLayer}</div>
+      `;
+      card.addEventListener('click', () => toggleCenturyCard(ev.id));
+      stage.appendChild(card);
+    });
   }
 
-  const ev = pickup.candidates[pickup.index];
-  const next = pickup.candidates[pickup.index + 1];
-
-  if (next){
-    const behind = buildCard(next, true);
-    stage.appendChild(behind);
-  }
-  const front = buildCard(ev, false);
-  stage.appendChild(front);
-  attachDrag(front, ev);
+  updatePickupNextBtn();
 }
 
-function buildCard(ev, behind){
-  const card = document.createElement('div');
-  card.className = 'card' + (behind ? ' behind' : ' front');
-  card.innerHTML = `
-    <div class="card-year tech">${ev.year}年 &middot; ${ev.place}</div>
-    <div class="card-title">${ev.title}</div>
-    <div class="card-teaser">${ev.teaser}</div>
-    <div class="card-fact">${ev.factLayer}</div>
-    <div class="stamp remember tech">REMEMBER</div>
-    <div class="stamp skip tech">SKIP</div>
-  `;
-  return card;
+function toggleCenturyCard(eventId){
+  const selected = centuryPickup.selections[CENTURIES[centuryPickup.index]];
+  if (selected.has(eventId)) selected.delete(eventId);
+  else selected.add(eventId);
+  renderCenturyPickup();
 }
 
-function attachDrag(card, ev){
-  let startX = 0, startY = 0, dx = 0, dy = 0, dragging = false;
-  const stampRemember = card.querySelector('.stamp.remember');
-  const stampSkip = card.querySelector('.stamp.skip');
-
-  function updateStamps(){
-    const upness = Math.max(0, -dy) / 90;
-    const sideness = Math.abs(dx) / 110;
-    stampRemember.style.opacity = Math.min(1, upness);
-    stampSkip.style.opacity = dx < 0 ? 0 : Math.min(1, sideness);
-    if (dx < 0 && dy > -40){ // leftward discard also shown as skip via rotation cue
-      stampSkip.style.opacity = Math.min(1, Math.abs(dx) / 110);
-    }
-  }
-
-  function onDown(e){
-    dragging = true;
-    card.classList.remove('snap');
-    card.classList.add('dragging');
-    const p = e.touches ? e.touches[0] : e;
-    startX = p.clientX; startY = p.clientY;
-    if (card.setPointerCapture && e.pointerId !== undefined) card.setPointerCapture(e.pointerId);
-  }
-  function onMove(e){
-    if (!dragging) return;
-    const p = e.touches ? e.touches[0] : e;
-    dx = p.clientX - startX;
-    dy = p.clientY - startY;
-    card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 18}deg)`;
-    updateStamps();
-  }
-  function onUp(){
-    if (!dragging) return;
-    dragging = false;
-    card.classList.remove('dragging');
-
-    const isUp = dy < -80 && Math.abs(dy) > Math.abs(dx);
-    const isSide = Math.abs(dx) > 100;
-    const isDown = dy > 100 && Math.abs(dy) > Math.abs(dx);
-
-    if (isUp){
-      flyCard(card, 0, -700, () => commit(ev.id, 'input'));
-    } else if (isSide || isDown){
-      const fx = isSide ? (dx > 0 ? 700 : -700) : 0;
-      const fy = isDown ? 500 : dy;
-      flyCard(card, fx, fy, () => commit(ev.id, 'discard'));
-    } else {
-      card.classList.add('snap');
-      card.style.transform = 'translate(0,0) rotate(0)';
-      dx = 0; dy = 0;
-    }
-  }
-
-  card.addEventListener('pointerdown', onDown);
-  card.addEventListener('pointermove', onMove);
-  card.addEventListener('pointerup', onUp);
-  card.addEventListener('pointercancel', onUp);
-
-  card._commitInput = () => flyCard(card, 0, -700, () => commit(ev.id, 'input'));
-  card._commitDiscard = () => flyCard(card, -700, 100, () => commit(ev.id, 'discard'));
+function updatePickupNextBtn(){
+  const btn = document.getElementById('pickupNextBtn');
+  btn.classList.add('enabled');
+  btn.textContent = centuryPickup.index === CENTURIES.length - 1 ? '完了' : '次へ';
 }
 
-function flyCard(card, tx, ty, done){
-  card.classList.add('fly');
-  card.style.transform = `translate(${tx}px, ${ty}px) rotate(${tx / 12}deg)`;
-  setTimeout(done, 380);
-}
-
-function commit(eventId, kind){
-  if (kind === 'input') pickup.inputIds.push(eventId);
-  pickup.index += 1;
-  renderPickupDots();
-  renderPickupCard();
-}
-
-document.getElementById('pickupNextBtn').addEventListener('click', finishPickup);
-document.getElementById('fallbackSkip').addEventListener('click', () => {
-  const card = document.querySelector('.card.front');
-  if (card && card._commitDiscard) card._commitDiscard();
-});
-document.getElementById('fallbackKeep').addEventListener('click', () => {
-  const card = document.querySelector('.card.front');
-  if (card && card._commitInput) card._commitInput();
+document.getElementById('pickupNextBtn').addEventListener('click', () => {
+  if (centuryPickup.index >= CENTURIES.length - 1){
+    finishCenturyPickup();
+  } else {
+    centuryPickup.index += 1;
+    renderCenturyPickup();
+  }
 });
 
-function finishPickup(){
-  if (pickup.inputIds.length > 0){
-    const now = new Date().toISOString();
-    pickup.inputIds.forEach(id => ringList.push({ id, addedAt: now }));
-    saveRingList();
-  }
+// PC向け: 縦ホイールを横スクロールに変換し、マウスドラッグでも横送りできるようにする
+(function enableDesktopHorizontalScroll(el){
+  el.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    el.scrollLeft += e.deltaY;
+    e.preventDefault();
+  }, { passive: false });
+
+  let dragging = false, startX = 0, startScrollLeft = 0, moved = false;
+  el.addEventListener('mousedown', (e) => {
+    dragging = true; moved = false;
+    startX = e.clientX;
+    startScrollLeft = el.scrollLeft;
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 4) moved = true;
+    el.scrollLeft = startScrollLeft - dx;
+  });
+  window.addEventListener('mouseup', () => { dragging = false; });
+  // ドラッグでカードが動いた直後は、離した時のclickでカード選択が誤発火しないようにする
+  el.addEventListener('click', (e) => { if (moved) e.stopPropagation(); }, true);
+})(document.getElementById('pickupStage'));
+
+function finishCenturyPickup(){
+  const now = new Date().toISOString();
+  CENTURIES.forEach(c => {
+    centuryPickup.selections[c].forEach(id => ringList.push({ id, addedAt: now }));
+  });
+  saveRingList();
   showScreen('screen-ring');
   renderRing();
 }
@@ -898,10 +900,24 @@ let activeEventId = null;
 
 function openDetailSheet(ev){
   activeEventId = ev.id;
+  const isGreatman = ev.counterfactual !== undefined;
   document.getElementById('detailYear').textContent = ev.year + '年';
-  document.getElementById('detailTeaser').textContent = ev.teaser;
+  document.getElementById('detailPerson').style.display = isGreatman ? 'flex' : 'none';
+  document.getElementById('detailIconReason').style.display = isGreatman ? '' : 'none';
+  document.getElementById('detailTeaser').style.display = isGreatman ? 'none' : '';
+  if (isGreatman){
+    document.getElementById('detailPersonIcon').textContent = ev.icon || '';
+    document.getElementById('detailPersonName').textContent = ev.title;
+    document.getElementById('detailIconReason').textContent = ev.iconReason || '';
+  } else {
+    document.getElementById('detailTeaser').textContent = ev.teaser;
+  }
   document.getElementById('detailPlace').textContent = ev.place;
-  document.getElementById('detailBody').innerHTML = `
+  document.getElementById('detailBody').innerHTML = (ev.counterfactual !== undefined) ? `
+    <p><span class="tag">何をした人か</span>${ev.whatTheyDid}</p>
+    <p><span class="tag">詳細</span>${ev.factLayer}</p>
+    <p><span class="tag">もし歴史が違ったら</span>${ev.counterfactual}</p>
+  ` : `
     <p><span class="tag">事実レイヤー</span>${ev.factLayer}</p>
     <p><span class="tag">具体的なマテリアル</span>${ev.material}</p>
     <p><span class="tag">体感レイヤー</span>${ev.sensation}</p>
