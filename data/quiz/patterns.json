@@ -59,16 +59,17 @@
       "label": "前後関係",
       "steps": [5],
       "staticEventSource": "data/quiz/order_events.json",
+      "personActionSource": "data/quiz/person_actions.json",
       "minYearDiff": 5,
       "variants": [
         {
           "questionType": "true_false",
-          "questionTemplate": "西暦{{staticYear}}年に{{staticHeadline}}が起きました。これは{{personTitle}}より{{relation}}の出来事である",
+          "questionTemplate": "西暦：{{staticYear}}年\n事件：{{staticHeadline}}\n\nこの事件が起きたのは、\n{{personTitle}}による{{personAction}}より{{relation}}のこと",
           "answerField": "computed_boolean"
         },
         {
           "questionType": "multiple_choice",
-          "questionTemplate": "西暦{{staticYear}}年に{{staticHeadline}}が起きました。これより{{relation}}の出来事はどれ？",
+          "questionTemplate": "西暦：{{staticYear}}年\n事件：{{staticHeadline}}\n\nこの事件より{{relation}}の出来事はどれ？",
           "answerField": "title",
           "choicePool": {
             "source": "held_events",

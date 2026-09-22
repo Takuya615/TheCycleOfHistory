@@ -451,7 +451,7 @@
     padding:36px 26px;text-align:center;
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next","YuGothic",sans-serif;
   }
-  .quiz-prompt{font-size:17px;line-height:1.75;}
+  .quiz-prompt{font-size:17px;line-height:1.75;white-space:pre-line;}
   @keyframes quizCardEnter{
     from{opacity:0;transform:translateY(18px) rotate(-3deg) scale(.94);}
     to{opacity:1;transform:none;}
@@ -1123,15 +1123,19 @@ function highlightNewEvents(ids){
    ================================================================== */
 let quizPatterns = null;
 let orderEvents = null;
+let personActions = null; // id -> 短い名詞句（例:「電球の発明」）。前後関係問題の文言用
 
 async function loadQuizData(){
-  if (quizPatterns && orderEvents) return;
-  const [patternsRes, orderRes] = await Promise.all([
+  if (quizPatterns && orderEvents && personActions) return;
+  const [patternsRes, orderRes, actionsRes] = await Promise.all([
     fetch('data/quiz/patterns.json'),
-    fetch('data/quiz/order_events.json')
+    fetch('data/quiz/order_events.json'),
+    fetch('data/quiz/person_actions.json')
   ]);
   quizPatterns = await patternsRes.json();
   orderEvents = await orderRes.json();
+  const actionList = await actionsRes.json();
+  personActions = new Map(actionList.map(a => [a.id, a.action]));
 }
 
 function choiceCountFor(heldCount){
@@ -1212,6 +1216,7 @@ function buildOrderRelationQuestion(held){
     .replace('{{staticYear}}', staticEv.year)
     .replace('{{staticHeadline}}', staticEv.headline)
     .replace('{{personTitle}}', person.title)
+    .replace('{{personAction}}', personActions.get(person.id) || person.title)
     .replace('{{relation}}', relation);
   return { type: 'true_false', prompt, correctBool: relation === actualRelation };
 }
