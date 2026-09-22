@@ -291,6 +291,11 @@
   .card-ba p{font-size:13px;line-height:1.7;color:#4a3d30;margin:0 0 10px;}
   .card-ba p:last-child{margin-bottom:0;}
   .ba-tag{display:block;font-size:10px;letter-spacing:.14em;color:var(--ember-dim);margin-bottom:3px;}
+  .card-portrait{
+    display:block;width:56px;height:56px;border-radius:50%;
+    object-fit:cover;margin:0 0 12px;
+    border:1px solid rgba(36,27,20,.15);
+  }
 
   .pickup-next-fab{opacity:.35;pointer-events:none;}
   .pickup-next-fab.enabled{opacity:1;pointer-events:auto;}
@@ -337,6 +342,11 @@
   .detail-icon-reason{
     font-size:12px;line-height:1.6;color:var(--ink);
     margin:-2px 0 14px;
+  }
+  .detail-portrait{
+    display:block;width:128px;height:128px;border-radius:50%;
+    object-fit:cover;margin:6px auto 18px;
+    border:1px solid rgba(36,27,20,.15);
   }
   .detail-place{
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
@@ -464,6 +474,7 @@
       <span class="detail-person-name" id="detailPersonName"></span>
     </div>
     <div class="detail-icon-reason tech" id="detailIconReason"></div>
+    <img class="detail-portrait" id="detailPortrait" alt="">
     <div class="detail-teaser" id="detailTeaser"></div>
     <div class="detail-place tech" id="detailPlace"></div>
     <div class="detail-body" id="detailBody"></div>
@@ -815,6 +826,7 @@ function renderCenturyPickup(){
         <div class="card-year tech">${ev.year}年</div>
         <div class="card-title">${ev.title}</div>
         <div class="card-teaser">${ev.teaser}</div>
+        ${ev.portrait ? `<img class="card-portrait" src="${ev.portrait}" alt="${ev.title}">` : ''}
         <div class="card-ba">
           <p><span class="ba-tag tech">Before</span>${ev.before}</p>
           <p><span class="ba-tag tech">After</span>${ev.after}</p>
@@ -905,12 +917,20 @@ function openDetailSheet(ev){
   document.getElementById('detailPerson').style.display = isGreatman ? 'flex' : 'none';
   document.getElementById('detailIconReason').style.display = isGreatman ? '' : 'none';
   document.getElementById('detailTeaser').style.display = isGreatman ? 'none' : '';
+  const portraitEl = document.getElementById('detailPortrait');
   if (isGreatman){
     document.getElementById('detailPersonIcon').textContent = ev.icon || '';
     document.getElementById('detailPersonName').textContent = ev.title;
     document.getElementById('detailIconReason').textContent = ev.iconReason || '';
   } else {
     document.getElementById('detailTeaser').textContent = ev.teaser;
+  }
+  if (isGreatman && ev.portrait){
+    portraitEl.src = ev.portrait;
+    portraitEl.alt = ev.title;
+    portraitEl.style.display = 'block';
+  } else {
+    portraitEl.style.display = 'none';
   }
   document.getElementById('detailPlace').textContent = ev.place;
   document.getElementById('detailBody').innerHTML = (ev.counterfactual !== undefined) ? `

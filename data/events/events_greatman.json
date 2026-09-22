@@ -15,7 +15,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "羅針盤 🧭：世界一周という航海の軌跡が、方位を示す針の円環と重なることから。"
+    "iconReason": "羅針盤 🧭：世界一周という航海の軌跡が、方位を示す針の円環と重なることから。",
+    "portrait": "image/portraits/magellan.jpg"
   },
   {
     "id": "greatman-1588-001",
@@ -33,7 +34,8 @@
     "needsReview": true,
     "reviewNote": "無敵艦隊の海戦という戦争に関わる出来事。実際の兵士の死ではなく歴史的な結果（撃退・海軍国化）に焦点を当てている。出来事自体は400年以上前で当事者は存命ではない。",
     "sourceUrls": [],
-    "iconReason": "剣 🗡️：無敵艦隊を打ち破った海戦の象徴として。"
+    "iconReason": "剣 🗡️：無敵艦隊を打ち破った海戦の象徴として。",
+    "portrait": "image/portraits/elizabeth.jpg"
   },
   {
     "id": "greatman-1610-001",
@@ -51,7 +53,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "望遠鏡 🔭：本人が自作し、天体観測に使った発明品そのものから。"
+    "iconReason": "望遠鏡 🔭：本人が自作し、天体観測に使った発明品そのものから。",
+    "portrait": "image/portraits/galileo.jpg"
   },
   {
     "id": "greatman-1687-001",
@@ -69,7 +72,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "りんご 🍎：万有引力を思いついたという有名な逸話から。"
+    "iconReason": "りんご 🍎：万有引力を思いついたという有名な逸話から。",
+    "portrait": "image/portraits/newton.jpg"
   },
   {
     "id": "greatman-1752-001",
@@ -87,7 +91,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "雷 ⚡：凧を使った実験で、雷の正体が電気であることを確かめたことから。"
+    "iconReason": "雷 ⚡：凧を使った実験で、雷の正体が電気であることを確かめたことから。",
+    "portrait": "image/portraits/franklin.jpg"
   },
   {
     "id": "greatman-1769-001",
@@ -105,7 +110,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "沸騰したやかん 🫖：やかんの蓋が蒸気で持ち上がるのを見て蒸気機関を思いついたという逸話から。"
+    "iconReason": "沸騰したやかん 🫖：やかんの蓋が蒸気で持ち上がるのを見て蒸気機関を思いついたという逸話から。",
+    "portrait": "image/portraits/watt.jpg"
   },
   {
     "id": "greatman-1776-001",
@@ -123,7 +129,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "見えざる手 ✋：本人が著書で使った「見えざる手」という比喩そのものから。"
+    "iconReason": "見えざる手 ✋：本人が著書で使った「見えざる手」という比喩そのものから。",
+    "portrait": "image/portraits/adam_smith.jpg"
   },
   {
     "id": "greatman-1796-001",
@@ -141,7 +148,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "注射針 💉：種痘（ワクチン接種）そのものの象徴として。"
+    "iconReason": "注射針 💉：種痘（ワクチン接種）そのものの象徴として。",
+    "portrait": "image/portraits/jenner.jpg"
   },
   {
     "id": "greatman-1804-001",
@@ -159,7 +167,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "王冠 👑：フランス皇帝として戴冠したことの象徴として。"
+    "iconReason": "王冠 👑：フランス皇帝として戴冠したことの象徴として。",
+    "portrait": "image/portraits/napoleon.jpg"
   },
   {
     "id": "greatman-1854-001",
@@ -177,7 +186,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "ランプ 🪔：「ランプを持つ貴婦人」と呼ばれた異名から。"
+    "iconReason": "ランプ 🪔：「ランプを持つ貴婦人」と呼ばれた異名から。",
+    "portrait": "image/portraits/nightingale.jpg"
   },
   {
     "id": "greatman-1859-001",
@@ -195,7 +205,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "猿 🐒：「人間はサルから進化した」という広く知られた進化論のイメージから。"
+    "iconReason": "猿 🐒：「人間はサルから進化した」という広く知られた進化論のイメージから。",
+    "portrait": "image/portraits/darwin.jpg"
   },
   {
     "id": "greatman-1879-001",
@@ -213,7 +224,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "電球 💡：実用的な電球を発明したことそのものから。"
+    "iconReason": "電球 💡：実用的な電球を発明したことそのものから。",
+    "portrait": "image/portraits/edison.jpg"
   },
   {
     "id": "greatman-1905-001",
@@ -231,7 +243,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "舌 👅：舌を出した有名な写真のポーズから。"
+    "iconReason": "舌 👅：舌を出した有名な写真のポーズから。",
+    "portrait": "image/portraits/einstein.jpeg"
   },
   {
     "id": "greatman-1928-001",
@@ -249,7 +262,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "カビたみかん 🍊：培養中のカビからペニシリンを発見したという逸話を果物に置き換えて。"
+    "iconReason": "カビたみかん 🍊：培養中のカビからペニシリンを発見したという逸話を果物に置き換えて。",
+    "portrait": "image/portraits/fleming.jpg"
   },
   {
     "id": "greatman-1969-001",
@@ -267,7 +281,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "ロケット 🚀：月面着陸を実現した乗り物そのものから。"
+    "iconReason": "ロケット 🚀：月面着陸を実現した乗り物そのものから。",
+    "portrait": "image/portraits/armstrong.jpg"
   },
   {
     "id": "greatman-1994-001",
@@ -285,7 +300,8 @@
     "needsReview": true,
     "reviewNote": "アパルトヘイトは終結から30年程度と比較的近年の出来事であり、当事者・関係者が存命の可能性がある。人物自体は死去済み（2013年）のため「超有名な偉人」カテゴリの条件は満たす。要レビューのまま採用でユーザー承認済み。",
     "sourceUrls": [],
-    "iconReason": "鎖 ⛓️：27年におよぶ投獄の象徴として。"
+    "iconReason": "鎖 ⛓️：27年におよぶ投獄の象徴として。",
+    "portrait": "image/portraits/mandela.jpg"
   },
   {
     "id": "greatman-1560-001",
@@ -303,7 +319,8 @@
     "needsReview": true,
     "reviewNote": "桶狭間の戦いという合戦そのものを扱う出来事。実際の死傷描写ではなく「奇襲・戦術」という結果と、本能寺の変の逸話に基づく「炎」という象徴物に焦点を当てている。出来事自体は460年以上前で当事者は存命ではない。要レビューのまま採用でユーザー承認済み。",
     "sourceUrls": [],
-    "iconReason": "炎 🔥：本能寺の変で自ら火を放って最期を迎えたという逸話から。"
+    "iconReason": "炎 🔥：本能寺の変で自ら火を放って最期を迎えたという逸話から。",
+    "portrait": "image/portraits/nobunaga.jpg"
   },
   {
     "id": "greatman-1590-001",
@@ -321,7 +338,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "ネズミ 🐀：当時秀吉は織田信長から「ハゲネズミ」と呼ばれていたことから。"
+    "iconReason": "ネズミ 🐀：当時秀吉は織田信長から「ハゲネズミ」と呼ばれていたことから。",
+    "portrait": "image/portraits/hideyoshi.webp"
   },
   {
     "id": "greatman-1603-001",
@@ -339,7 +357,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "葵の葉 🍃：徳川家の家紋「三つ葉葵」は徳川を象徴する最も有名な視覚シンボルであることから。"
+    "iconReason": "葵の葉 🍃：徳川家の家紋「三つ葉葵」は徳川を象徴する最も有名な視覚シンボルであることから。",
+    "portrait": "image/portraits/ieyasu.jpg"
   },
   {
     "id": "greatman-1774-001",
@@ -357,7 +376,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "メス 🔪：「解体新書」という解剖学書を翻訳したことから。"
+    "iconReason": "メス 🔪：「解体新書」という解剖学書を翻訳したことから。",
+    "portrait": "image/portraits/genpaku.webp"
   },
   {
     "id": "greatman-1821-001",
@@ -375,7 +395,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "地図 🗺️：17年かけて日本全国を測量し、日本地図を完成させたことそのものから。"
+    "iconReason": "地図 🗺️：17年かけて日本全国を測量し、日本地図を完成させたことそのものから。",
+    "portrait": "image/portraits/tadataka.jpg"
   },
   {
     "id": "greatman-1867-001",
@@ -393,7 +414,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "ピストル 🔫：刀ではなく西洋式のピストルを愛用していたという有名な逸話から。"
+    "iconReason": "ピストル 🔫：刀ではなく西洋式のピストルを愛用していたという有名な逸話から。",
+    "portrait": "image/portraits/ryouma.jpg"
   },
   {
     "id": "greatman-1872-001",
@@ -411,7 +433,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "お札 💴：一万円札の顔として長年親しまれてきたことから。"
+    "iconReason": "お札 💴：一万円札の顔として長年親しまれてきたことから。",
+    "portrait": "image/portraits/yukichi.webp"
   },
   {
     "id": "greatman-1905-002",
@@ -429,7 +452,8 @@
     "needsReview": true,
     "reviewNote": "日露戦争という戦争を扱う出来事。実際の戦闘・死傷ではなく「掲げた旗（Z旗）」という象徴に焦点を当てている。出来事自体は120年以上前で当事者は存命ではない。要レビューのまま採用でユーザー承認済み。",
     "sourceUrls": [],
-    "iconReason": "旗 🚩：開戦時に掲げた「Z旗（皇国の興廃この一戦にあり）」という有名な逸話から。"
+    "iconReason": "旗 🚩：開戦時に掲げた「Z旗（皇国の興廃この一戦にあり）」という有名な逸話から。",
+    "portrait": "image/portraits/togo.jpg"
   },
   {
     "id": "greatman-1949-001",
@@ -447,7 +471,8 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "メダル 🏅：日本人初のノーベル賞受賞という功績そのものから。"
+    "iconReason": "メダル 🏅：日本人初のノーベル賞受賞という功績そのものから。",
+    "portrait": "image/portraits/yukawa.jpg"
   },
   {
     "id": "greatman-1963-001",
@@ -465,6 +490,7 @@
     "needsReview": false,
     "reviewNote": null,
     "sourceUrls": [],
-    "iconReason": "バイク 🏍️：世界のレースに挑んだホンダの原点となった乗り物であることから。"
+    "iconReason": "バイク 🏍️：世界のレースに挑んだホンダの原点となった乗り物であることから。",
+    "portrait": "image/portraits/honda.jpg"
   }
 ]
