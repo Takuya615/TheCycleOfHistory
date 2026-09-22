@@ -244,16 +244,20 @@
 
   .duel-stage{
     flex:1 1 auto;min-height:0;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:14px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    display:flex;flex-direction:row;align-items:center;
+    gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;
     padding:14px 20px calc(env(safe-area-inset-bottom,0px) + 20px);
+    cursor:grab;
   }
+  .duel-stage:active{cursor:grabbing;}
   .duel-or{
     flex:0 0 auto;font-size:11px;letter-spacing:.2em;color:var(--muted);
   }
 
   .duel-card{
-    flex:0 0 auto;width:min(86vw,340px);max-height:44vh;
+    flex:0 0 auto;width:min(78vw,300px);max-height:100%;
+    scroll-snap-align:center;
     background:linear-gradient(180deg, var(--skin) 0%, var(--skin-2) 100%);
     color:var(--ink);border-radius:20px;
     box-shadow:0 16px 40px rgba(0,0,0,.4);
@@ -1008,6 +1012,31 @@ function choosePickupOption(ev){
   duelPickup.round += 1;
   renderPickupRound();
 }
+
+// PC向け: マウスホイールの縦スクロールを横送りに変換し、ドラッグでも横送りできるようにする
+(function enableDesktopHorizontalScroll(el){
+  el.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    el.scrollLeft += e.deltaY;
+    e.preventDefault();
+  }, { passive: false });
+
+  let dragging = false, startX = 0, startScrollLeft = 0, moved = false;
+  el.addEventListener('mousedown', (e) => {
+    dragging = true; moved = false;
+    startX = e.clientX;
+    startScrollLeft = el.scrollLeft;
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 4) moved = true;
+    el.scrollLeft = startScrollLeft - dx;
+  });
+  window.addEventListener('mouseup', () => { dragging = false; });
+  // ドラッグでカードが動いた直後は、離した時のclickでカード選択が誤発火しないようにする
+  el.addEventListener('click', (e) => { if (moved) e.stopPropagation(); }, true);
+})(document.getElementById('pickupStage'));
 
 async function finishCenturyPickup(){
   const now = new Date().toISOString();
