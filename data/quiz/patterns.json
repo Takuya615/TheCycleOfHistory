@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "config": {
+    "questionsPerQuiz": 5,
+    "passThreshold": 3,
+    "orderRelationStep": 5,
+    "orderRelationMinYearDiff": 5,
+    "choiceCountRules": [
+      { "minHeldCount": 3, "maxHeldCount": 3, "choiceCount": 3 },
+      { "minHeldCount": 4, "maxHeldCount": 5, "choiceCount": 4 },
+      { "minHeldCount": 6, "maxHeldCount": null, "choiceCount": 4 }
+    ]
+  },
+  "patterns": [
+    {
+      "id": "icon_to_year",
+      "label": "アイコン→年",
+      "questionType": "multiple_choice",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "この{{icon}}は、いつの出来事？",
+      "promptField": "icon",
+      "answerField": "year",
+      "choicePool": {
+        "source": "held_events",
+        "field": "year",
+        "excludeTargetEvent": true
+      }
+    },
+    {
+      "id": "person_to_year",
+      "label": "人物→活躍年",
+      "questionType": "multiple_choice",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{title}}は何年に活躍した人でしょう？",
+      "promptField": "title",
+      "answerField": "year",
+      "choicePool": {
+        "source": "held_events",
+        "field": "year",
+        "excludeTargetEvent": true
+      }
+    },
+    {
+      "id": "year_to_event",
+      "label": "年→出来事",
+      "questionType": "multiple_choice",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{year}}年の歴史的出来事は？",
+      "promptField": "year",
+      "answerField": "title",
+      "choicePool": {
+        "source": "held_events",
+        "field": "title",
+        "excludeTargetEvent": true
+      }
+    },
+    {
+      "id": "order_relation",
+      "label": "前後関係",
+      "steps": [5],
+      "staticEventSource": "data/quiz/order_events.json",
+      "minYearDiff": 5,
+      "variants": [
+        {
+          "questionType": "true_false",
+          "questionTemplate": "西暦{{staticYear}}年に{{staticHeadline}}が起きました。これは{{personTitle}}より{{relation}}の出来事である",
+          "answerField": "computed_boolean"
+        },
+        {
+          "questionType": "multiple_choice",
+          "questionTemplate": "西暦{{staticYear}}年に{{staticHeadline}}が起きました。これより{{relation}}の出来事はどれ？",
+          "answerField": "title",
+          "choicePool": {
+            "source": "held_events",
+            "field": "title",
+            "excludeTargetEvent": false
+          }
+        }
+      ],
+      "relationValues": ["前", "後"]
+    }
+  ]
+}

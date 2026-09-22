@@ -408,6 +408,98 @@
   }
   .palette-option .p-name{font-size:13px;color:var(--skin);}
 
+  /* ---------- level badge (ring screen header) ---------- */
+  .level-badge{
+    margin-top:8px;font-size:11px;color:var(--muted-warm);letter-spacing:.05em;
+  }
+
+  /* ---------- fab: quiz mode ---------- */
+  .fab.fab-quiz{
+    background:linear-gradient(135deg, var(--ember) 0%, var(--ember-dim) 100%);
+    border-color:var(--ember);
+    animation:fabPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes fabPulse{
+    0%,100%{box-shadow:0 8px 24px rgba(224,136,80,.18);}
+    50%{box-shadow:0 8px 30px rgba(224,136,80,.42);}
+  }
+
+  /* ---------- pickup: selection limit ---------- */
+  .pickup-limit{
+    flex:0 0 auto;font-size:11px;color:var(--muted);letter-spacing:.04em;
+    text-align:center;padding:6px 20px 0;
+  }
+  .century-card.disabled{opacity:.4;pointer-events:none;}
+
+  /* ---------- ring: newly-added highlight ---------- */
+  .node-dot.new-highlight{animation:newHighlight 1.5s ease-in-out;}
+  @keyframes newHighlight{
+    0%,100%{filter:none;}
+    30%,70%{filter:drop-shadow(0 0 6px var(--ember));}
+  }
+  .node-glow.new-highlight{opacity:.9;}
+
+  /* ---------- quiz screen ---------- */
+  .quiz-stage{
+    flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;
+    padding:14px 20px;
+  }
+  .quiz-card{
+    width:min(86vw,340px);
+    background:linear-gradient(180deg, var(--skin) 0%, var(--skin-2) 100%);
+    color:var(--ink);border-radius:20px;box-shadow:0 16px 40px rgba(0,0,0,.4);
+    padding:36px 26px;text-align:center;
+    font-family:"Hiragino Kaku Gothic ProN","Avenir Next","YuGothic",sans-serif;
+  }
+  .quiz-prompt{font-size:17px;line-height:1.75;}
+  @keyframes quizCardEnter{
+    from{opacity:0;transform:translateY(18px) rotate(-3deg) scale(.94);}
+    to{opacity:1;transform:none;}
+  }
+  .quiz-card-enter{animation:quizCardEnter .45s cubic-bezier(.19,1,.22,1);}
+
+  .quiz-choices{
+    flex:0 0 auto;display:flex;flex-direction:column;gap:10px;
+    padding:0 20px calc(env(safe-area-inset-bottom,0px) + 26px);
+  }
+  .quiz-choice-btn{
+    appearance:none;border:1px solid var(--instrument-dim);background:var(--void-2);
+    color:var(--skin);font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
+    font-size:14px;letter-spacing:.04em;
+    padding:14px 18px;border-radius:14px;cursor:pointer;text-align:left;
+    transition:transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .quiz-choice-btn:active{transform:scale(.97);border-color:var(--ember);background:rgba(224,136,80,.14);}
+
+  /* ---------- quiz result screen ---------- */
+  .quiz-result-wrap{
+    flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:28px;padding:20px;
+  }
+  .quiz-result-card{
+    position:relative;width:min(80vw,300px);padding:44px 24px;border-radius:22px;
+    background:linear-gradient(180deg, var(--skin) 0%, var(--skin-2) 100%);
+    color:var(--ink);text-align:center;box-shadow:0 16px 40px rgba(0,0,0,.4);
+    overflow:visible;transition:box-shadow .4s ease;
+  }
+  .quiz-result-score{font-size:34px;font-weight:600;letter-spacing:.04em;}
+  .quiz-result-title{
+    margin-top:14px;font-size:15px;letter-spacing:.04em;color:var(--ember-dim);
+    font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
+    opacity:0;transform:translateY(6px);transition:opacity .5s ease, transform .5s ease;
+  }
+  .quiz-result-card.revealed .quiz-result-title{opacity:1;transform:none;}
+  .quiz-result-card.pass{box-shadow:0 16px 46px rgba(224,136,80,.4);}
+  .quiz-result-particle{
+    position:absolute;top:50%;left:50%;width:6px;height:6px;border-radius:50%;
+    background:var(--ember);opacity:0;pointer-events:none;
+  }
+  @keyframes particleBurst{
+    0%{opacity:1;transform:translate(-50%,-50%) translate(0,0) scale(1);}
+    100%{opacity:0;transform:translate(-50%,-50%) translate(var(--px), var(--py)) scale(.4);}
+  }
+  .quiz-result-particle.burst{animation:particleBurst .9s ease-out forwards;}
+
   ::-webkit-scrollbar{display:none;}
 </style>
 </head>
@@ -425,6 +517,7 @@
   <div class="screen active" id="screen-ring">
     <header>
       <div class="eyebrow tech">歴史の宮殿</div>
+      <div class="level-badge tech" id="levelBadge"></div>
     </header>
 
     <div class="stage">
@@ -458,9 +551,31 @@
       <div class="headline tech" id="pickupHeadline">1500年代</div>
     </header>
     <div class="dots" id="pickupDots"></div>
+    <div class="pickup-limit tech" id="pickupLimit"></div>
     <div class="pickup-stage" id="pickupStage"></div>
     <div class="fab-wrap">
       <button class="fab tech pickup-next-fab" id="pickupNextBtn">次へ</button>
+    </div>
+  </div>
+
+  <!-- ============ Screen 4: クイズフェーズ ============ -->
+  <div class="screen" id="screen-quiz">
+    <header>
+      <div class="eyebrow tech" id="quizEyebrow">1 / 5</div>
+    </header>
+    <div class="dots" id="quizDots"></div>
+    <div class="quiz-stage" id="quizStage"></div>
+    <div class="quiz-choices" id="quizChoices"></div>
+  </div>
+
+  <!-- ============ Screen 5: クイズ結果 ============ -->
+  <div class="screen" id="screen-quiz-result">
+    <div class="quiz-result-wrap">
+      <div class="quiz-result-card" id="quizResultCard">
+        <div class="quiz-result-score" id="quizResultScore">0 / 5</div>
+        <div class="quiz-result-title tech" id="quizResultTitle"></div>
+      </div>
+      <button class="fab tech" id="quizResultContinueBtn" style="display:none;">つづける</button>
     </div>
   </div>
 
@@ -500,6 +615,51 @@ function loadRingList(){
 }
 function saveRingList(){
   try{ localStorage.setItem(RING_KEY, JSON.stringify(ringList)); }catch(e){}
+}
+
+/* ---------- level / 称号 (service_design_document.md 10-3節) ---------- */
+const LEVEL_KEY = 'rekishiNoKyuden.level.v1';
+const LEVEL_TABLE = [
+  { level: 1,  cap: 3,  title: '記憶の見習い' },
+  { level: 2,  cap: 4,  title: '円環の観察者' },
+  { level: 3,  cap: 5,  title: '円環の探求者' },
+  { level: 4,  cap: 7,  title: '時の道筋を辿る者' },
+  { level: 5,  cap: 10, title: '記憶の織り手' },
+  { level: 6,  cap: 11, title: '歴史の旅人' },
+  { level: 7,  cap: 13, title: '円環の案内人' },
+  { level: 8,  cap: 14, title: '記憶の番人' },
+  { level: 9,  cap: 17, title: '時の目撃者' },
+  { level: 10, cap: 18, title: '歴史の編纂者' },
+  { level: 11, cap: 20, title: '円環の賢者' },
+  { level: 12, cap: 21, title: '記憶の継承者' },
+  { level: 13, cap: 23, title: '時代を渡る者' },
+  { level: 14, cap: 24, title: '歴史の守護者' },
+  { level: 15, cap: 26, title: '宮殿の主' }
+];
+let playerLevel = 1;
+
+function getLevelInfo(level){
+  const clamped = Math.min(Math.max(level, 1), LEVEL_TABLE.length);
+  return LEVEL_TABLE[clamped - 1];
+}
+function loadPlayerLevel(){
+  try{
+    const v = parseInt(localStorage.getItem(LEVEL_KEY), 10);
+    return (v >= 1 && v <= LEVEL_TABLE.length) ? v : 1;
+  }catch(e){ return 1; }
+}
+function savePlayerLevel(){
+  try{ localStorage.setItem(LEVEL_KEY, String(playerLevel)); }catch(e){}
+}
+// 円環リストの件数が現在のレベルの上限を上回っている場合（旧データ等）、
+// レベルを保有件数に見合うところまで引き上げる（レベルは下げない）。
+function reconcileLevelWithHeldCount(heldCount){
+  let lvl = playerLevel;
+  while (lvl < LEVEL_TABLE.length && getLevelInfo(lvl).cap < heldCount) lvl += 1;
+  if (lvl !== playerLevel){
+    playerLevel = lvl;
+    savePlayerLevel();
+  }
 }
 
 async function loadThemes(){
@@ -645,11 +805,17 @@ function buildBodySilhouette(){
   return g;
 }
 
+let fabMode = 'pickup';
+
 async function renderRing(){
   const centerLabel = document.getElementById('ringCenterLabel');
   const fab = document.getElementById('fabBtn');
 
   ringEventsCache = await resolveRingEvents();
+  reconcileLevelWithHeldCount(ringEventsCache.length);
+  const levelInfo = getLevelInfo(playerLevel);
+  document.getElementById('levelBadge').textContent =
+    `Lv.${playerLevel}・${levelInfo.title}（${ringEventsCache.length}/${levelInfo.cap}）`;
 
   svg.innerHTML = '';
   svg.appendChild(buildBodySilhouette());
@@ -697,14 +863,25 @@ async function renderRing(){
 
   if (ringEventsCache.length === 0){
     centerLabel.innerHTML = `<div class="empty-msg tech">まだ何も記憶していません</div>`;
-    fab.textContent = '作成';
   } else {
     centerLabel.innerHTML = `<div class="hint">触れて、感じてください</div>`;
-    fab.textContent = '追加';
+  }
+
+  if (ringEventsCache.length >= levelInfo.cap){
+    fabMode = 'quiz';
+    fab.textContent = 'クイズに挑戦';
+    fab.classList.add('fab-quiz');
+  } else {
+    fabMode = 'pickup';
+    fab.textContent = ringEventsCache.length === 0 ? '作成' : '追加';
+    fab.classList.remove('fab-quiz');
   }
 }
 
-document.getElementById('fabBtn').addEventListener('click', startCenturyPickup);
+document.getElementById('fabBtn').addEventListener('click', () => {
+  if (fabMode === 'quiz') startQuiz();
+  else startCenturyPickup();
+});
 
 /* ==================================================================
    Screen 2 — テーマ選択画面（一旦コメントアウト。ワークフロー変更により
@@ -773,7 +950,11 @@ document.getElementById('themeBackBtn').addEventListener('click', () => {
 const CENTURIES = [1500, 1600, 1700, 1800, 1900];
 const DEMO_THEME_IDS = ['greatman']; // デモ表示は「超有名な偉人」16人で行う
 
-let centuryPickup = { byCentury: {}, index: 0, selections: {} };
+let centuryPickup = { byCentury: {}, index: 0, selections: {}, remainingSlots: 0 };
+
+function totalSelectedCount(){
+  return CENTURIES.reduce((sum, c) => sum + centuryPickup.selections[c].size, 0);
+}
 
 async function startCenturyPickup(){
   await Promise.all(DEMO_THEME_IDS.map(fetchEventsForTheme));
@@ -791,7 +972,8 @@ async function startCenturyPickup(){
   });
   CENTURIES.forEach(c => byCentury[c].sort((a, b) => a.year - b.year));
 
-  centuryPickup = { byCentury, index: 0, selections };
+  const remainingSlots = Math.max(0, getLevelInfo(playerLevel).cap - ringList.length);
+  centuryPickup = { byCentury, index: 0, selections, remainingSlots };
   showScreen('screen-pickup');
   renderCenturyPickup();
 }
@@ -812,6 +994,11 @@ function renderCenturyPickup(){
     dots.appendChild(d);
   });
 
+  const limitEl = document.getElementById('pickupLimit');
+  const remainingNow = centuryPickup.remainingSlots - totalSelectedCount();
+  limitEl.textContent = `あと${Math.max(0, remainingNow)}件選べます`;
+  const atLimit = remainingNow <= 0;
+
   const stage = document.getElementById('pickupStage');
   stage.innerHTML = '';
   if (events.length === 0){
@@ -819,7 +1006,8 @@ function renderCenturyPickup(){
   } else {
     events.forEach(ev => {
       const card = document.createElement('div');
-      card.className = 'century-card' + (selected.has(ev.id) ? ' selected' : '');
+      const isSelected = selected.has(ev.id);
+      card.className = 'century-card' + (isSelected ? ' selected' : '') + (atLimit && !isSelected ? ' disabled' : '');
       card.innerHTML = (ev.before !== undefined) ? `
         <span class="c-check"></span>
         <div class="card-icon">${ev.icon || ''}</div>
@@ -848,8 +1036,12 @@ function renderCenturyPickup(){
 
 function toggleCenturyCard(eventId){
   const selected = centuryPickup.selections[CENTURIES[centuryPickup.index]];
-  if (selected.has(eventId)) selected.delete(eventId);
-  else selected.add(eventId);
+  if (selected.has(eventId)){
+    selected.delete(eventId);
+  } else {
+    if (totalSelectedCount() >= centuryPickup.remainingSlots) return;
+    selected.add(eventId);
+  }
   renderCenturyPickup();
 }
 
@@ -893,15 +1085,263 @@ document.getElementById('pickupNextBtn').addEventListener('click', () => {
   el.addEventListener('click', (e) => { if (moved) e.stopPropagation(); }, true);
 })(document.getElementById('pickupStage'));
 
-function finishCenturyPickup(){
+async function finishCenturyPickup(){
   const now = new Date().toISOString();
+  const newIds = [];
   CENTURIES.forEach(c => {
-    centuryPickup.selections[c].forEach(id => ringList.push({ id, addedAt: now }));
+    centuryPickup.selections[c].forEach(id => {
+      ringList.push({ id, addedAt: now });
+      newIds.push(id);
+    });
   });
   saveRingList();
   showScreen('screen-ring');
-  renderRing();
+  await renderRing();
+  highlightNewEvents(newIds);
 }
+
+function highlightNewEvents(ids){
+  if (!ids.length) return;
+  ids.forEach(id => {
+    const dot = svg.querySelector(`.node-dot[data-id="${id}"]`);
+    const glow = svg.querySelector(`.node-glow[data-id="${id}"]`);
+    if (dot) dot.classList.add('new-highlight');
+    if (glow) glow.classList.add('active', 'new-highlight');
+  });
+  setTimeout(() => {
+    ids.forEach(id => {
+      const dot = svg.querySelector(`.node-dot[data-id="${id}"]`);
+      const glow = svg.querySelector(`.node-glow[data-id="${id}"]`);
+      if (dot) dot.classList.remove('new-highlight');
+      if (glow) glow.classList.remove('active', 'new-highlight');
+    });
+  }, 1600);
+}
+
+/* ==================================================================
+   Screen 4/5 — クイズフェーズ（service_design_document.md 10章）
+   ================================================================== */
+let quizPatterns = null;
+let orderEvents = null;
+
+async function loadQuizData(){
+  if (quizPatterns && orderEvents) return;
+  const [patternsRes, orderRes] = await Promise.all([
+    fetch('data/quiz/patterns.json'),
+    fetch('data/quiz/order_events.json')
+  ]);
+  quizPatterns = await patternsRes.json();
+  orderEvents = await orderRes.json();
+}
+
+function choiceCountFor(heldCount){
+  const rules = quizPatterns.config.choiceCountRules;
+  for (const r of rules){
+    if (heldCount >= r.minHeldCount && (r.maxHeldCount === null || heldCount <= r.maxHeldCount)){
+      return Math.min(r.choiceCount, heldCount);
+    }
+  }
+  return Math.min(4, heldCount);
+}
+
+function pickRandom(arr){
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function buildStandardQuestion(held){
+  const patternId = pickRandom(['icon_to_year', 'person_to_year', 'year_to_event']);
+  const pattern = quizPatterns.patterns.find(p => p.id === patternId);
+  const target = pickRandom(held);
+  const n = choiceCountFor(held.length);
+  const field = pattern.answerField;
+
+  const distractorPool = shuffle(held.filter(e => e.id !== target.id)).slice(0, n - 1).map(e => e[field]);
+  const values = shuffle([target[field], ...distractorPool]);
+  const correctIndex = values.indexOf(target[field]);
+
+  let prompt;
+  if (patternId === 'icon_to_year') prompt = pattern.questionTemplate.replace('{{icon}}', target.icon);
+  else if (patternId === 'person_to_year') prompt = pattern.questionTemplate.replace('{{title}}', target.title);
+  else prompt = pattern.questionTemplate.replace('{{year}}', target.year);
+
+  const choices = values.map(v => (field === 'year' ? `${v}年` : v));
+  return { type: 'multiple_choice', prompt, choices, correctIndex };
+}
+
+function buildOrderRelationQuestion(held){
+  const pattern = quizPatterns.patterns.find(p => p.id === 'order_relation');
+  const minDiff = pattern.minYearDiff;
+
+  const pairs = [];
+  held.forEach(h => {
+    orderEvents.forEach(o => {
+      if (Math.abs(h.year - o.year) >= minDiff) pairs.push({ person: h, staticEv: o });
+    });
+  });
+  if (pairs.length === 0) return buildStandardQuestion(held);
+
+  const { person, staticEv } = pickRandom(pairs);
+  const relation = Math.random() < 0.5 ? '前' : '後';
+
+  if (Math.random() < 0.5){
+    const satisfies = e => {
+      const diff = e.year - staticEv.year;
+      if (Math.abs(diff) < minDiff) return null;
+      return relation === '前' ? diff < 0 : diff > 0;
+    };
+    const matches = held.filter(e => satisfies(e) === true);
+    const nonMatches = held.filter(e => satisfies(e) === false);
+    const n = choiceCountFor(held.length);
+    if (matches.length >= 1 && nonMatches.length >= 1){
+      const correct = pickRandom(matches);
+      const distractors = shuffle(nonMatches).slice(0, Math.min(n - 1, nonMatches.length));
+      const choiceEvents = shuffle([correct, ...distractors]);
+      const correctIndex = choiceEvents.findIndex(e => e.id === correct.id);
+      const template = pattern.variants[1].questionTemplate;
+      const prompt = template
+        .replace('{{staticYear}}', staticEv.year)
+        .replace('{{staticHeadline}}', staticEv.headline)
+        .replace('{{relation}}', relation);
+      return { type: 'multiple_choice', prompt, choices: choiceEvents.map(e => e.title), correctIndex };
+    }
+  }
+
+  const actualRelation = staticEv.year < person.year ? '前' : '後';
+  const template = pattern.variants[0].questionTemplate;
+  const prompt = template
+    .replace('{{staticYear}}', staticEv.year)
+    .replace('{{staticHeadline}}', staticEv.headline)
+    .replace('{{personTitle}}', person.title)
+    .replace('{{relation}}', relation);
+  return { type: 'true_false', prompt, correctBool: relation === actualRelation };
+}
+
+function buildQuizQuestions(held){
+  const questions = [];
+  for (let i = 0; i < 4; i++) questions.push(buildStandardQuestion(held));
+  questions.push(buildOrderRelationQuestion(held));
+  return questions;
+}
+
+let quizState = { questions: [], index: 0, correctCount: 0 };
+
+async function startQuiz(){
+  await loadQuizData();
+  quizState = { questions: buildQuizQuestions(ringEventsCache), index: 0, correctCount: 0 };
+  showScreen('screen-quiz');
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const q = quizState.questions[quizState.index];
+
+  document.getElementById('quizEyebrow').textContent = `${quizState.index + 1} / ${quizState.questions.length}`;
+
+  const dots = document.getElementById('quizDots');
+  dots.innerHTML = '';
+  quizState.questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < quizState.index ? ' filled' : i === quizState.index ? ' current' : '');
+    dots.appendChild(d);
+  });
+
+  const stage = document.getElementById('quizStage');
+  stage.innerHTML = '';
+  const card = document.createElement('div');
+  card.className = 'quiz-card quiz-card-enter';
+  const prompt = document.createElement('div');
+  prompt.className = 'quiz-prompt';
+  prompt.textContent = q.prompt;
+  card.appendChild(prompt);
+  stage.appendChild(card);
+
+  const choicesWrap = document.getElementById('quizChoices');
+  choicesWrap.innerHTML = '';
+  if (q.type === 'true_false'){
+    [['◯', true], ['×', false]].forEach(([label, value]) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-choice-btn tech';
+      btn.textContent = label;
+      btn.addEventListener('click', () => answerQuiz(value));
+      choicesWrap.appendChild(btn);
+    });
+  } else {
+    q.choices.forEach((choiceText, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-choice-btn tech';
+      btn.textContent = choiceText;
+      btn.addEventListener('click', () => answerQuiz(i));
+      choicesWrap.appendChild(btn);
+    });
+  }
+}
+
+function answerQuiz(answer){
+  const q = quizState.questions[quizState.index];
+  const isCorrect = (q.type === 'true_false') ? (answer === q.correctBool) : (answer === q.correctIndex);
+  if (isCorrect) quizState.correctCount += 1;
+
+  if (quizState.index < quizState.questions.length - 1){
+    quizState.index += 1;
+    renderQuizQuestion();
+  } else {
+    showScreen('screen-quiz-result');
+    animateQuizResult(quizState.correctCount, quizState.questions.length);
+  }
+}
+
+function spawnResultParticles(container){
+  for (let i = 0; i < 10; i++){
+    const p = document.createElement('span');
+    p.className = 'quiz-result-particle';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 60 + Math.random() * 40;
+    p.style.setProperty('--px', `${Math.cos(angle) * dist}px`);
+    p.style.setProperty('--py', `${Math.sin(angle) * dist}px`);
+    container.appendChild(p);
+    requestAnimationFrame(() => p.classList.add('burst'));
+    setTimeout(() => p.remove(), 1000);
+  }
+}
+
+function animateQuizResult(score, total){
+  const passed = score >= quizPatterns.config.passThreshold;
+  const scoreEl = document.getElementById('quizResultScore');
+  const titleEl = document.getElementById('quizResultTitle');
+  const cardEl = document.getElementById('quizResultCard');
+  const continueBtn = document.getElementById('quizResultContinueBtn');
+
+  cardEl.classList.remove('pass', 'fail', 'revealed');
+  titleEl.textContent = '';
+  continueBtn.style.display = 'none';
+  scoreEl.textContent = `0 / ${total}`;
+
+  if (passed) playerLevel = Math.min(playerLevel + 1, LEVEL_TABLE.length);
+  savePlayerLevel();
+  const info = getLevelInfo(playerLevel);
+
+  let current = 0;
+  const timer = setInterval(() => {
+    current += 1;
+    scoreEl.textContent = `${current} / ${total}`;
+    if (current >= score){
+      clearInterval(timer);
+      setTimeout(() => {
+        cardEl.classList.add(passed ? 'pass' : 'fail', 'revealed');
+        titleEl.textContent = passed
+          ? `あなたは${info.title}になった`
+          : `あなたは${info.title}のままだ`;
+        continueBtn.style.display = '';
+        if (passed) spawnResultParticles(cardEl);
+      }, 200);
+    }
+  }, 150);
+}
+
+document.getElementById('quizResultContinueBtn').addEventListener('click', async () => {
+  showScreen('screen-ring');
+  await renderRing();
+});
 
 /* ==================================================================
    shared — event detail sheet
@@ -983,6 +1423,7 @@ document.getElementById('deleteBtn').addEventListener('click', () => {
   applyPalette(loadPalette());
   await loadThemes();
   ringList = loadRingList();
+  playerLevel = loadPlayerLevel();
   await renderRing();
 })();
 </script>
