@@ -127,7 +127,13 @@
   .body-silhouette circle{fill:var(--instrument-dim);}
   .body-silhouette line{stroke:var(--instrument-dim);stroke-width:34;stroke-linecap:round;}
   .tick{stroke:var(--instrument-dim);stroke-width:1;}
+  .century-tick{stroke:var(--instrument);stroke-width:1.5;opacity:.6;}
+  .century-spoke{stroke:var(--instrument-dim);stroke-width:1;opacity:.3;}
   .tick-label{fill:var(--muted);font-size:16px;text-anchor:middle;dominant-baseline:middle;}
+  .event-year-label{
+    fill:var(--muted-warm);font-size:9px;letter-spacing:.02em;
+    text-anchor:middle;dominant-baseline:middle;pointer-events:none;
+  }
   .node-hit{fill:transparent;cursor:pointer;}
   .node-dot{
     fill:var(--instrument);
@@ -332,8 +338,8 @@
   }
   .detail-person-icon{font-size:34px;line-height:1;}
   .detail-person-name{font-size:21px;line-height:1.4;color:var(--ink);font-weight:600;}
-  .detail-icon-reason{
-    font-size:12px;line-height:1.6;color:var(--ink);
+  .detail-mnemonic{
+    font-size:14px;line-height:1.7;color:var(--ember-dim);font-style:italic;
     margin:-2px 0 14px;
   }
   .detail-portrait{
@@ -571,7 +577,7 @@
       <span class="detail-person-icon" id="detailPersonIcon"></span>
       <span class="detail-person-name" id="detailPersonName"></span>
     </div>
-    <div class="detail-icon-reason tech" id="detailIconReason"></div>
+    <div class="detail-mnemonic" id="detailMnemonic"></div>
     <img class="detail-portrait" id="detailPortrait" alt="">
     <div class="detail-teaser" id="detailTeaser"></div>
     <div class="detail-place tech" id="detailPlace"></div>
@@ -805,9 +811,12 @@ async function renderRing(){
   svg.appendChild(el('circle', {cx:CX, cy:CY, r:R, class:'ring'}));
   for (let year = 1500; year < 2000; year += 100){
     const deg = angleForYear(year);
-    const p1 = pointOnRing(deg, R - 8);
-    const p2 = pointOnRing(deg, R + 8);
-    svg.appendChild(el('line', {x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, class:'tick'}));
+    const spokeInner = pointOnRing(deg, 40);
+    const spokeOuter = pointOnRing(deg, R - 14);
+    svg.appendChild(el('line', {x1:spokeInner.x, y1:spokeInner.y, x2:spokeOuter.x, y2:spokeOuter.y, class:'century-spoke'}));
+    const p1 = pointOnRing(deg, R - 14);
+    const p2 = pointOnRing(deg, R + 14);
+    svg.appendChild(el('line', {x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, class:'century-tick'}));
     const lp = pointOnRing(deg, R + 34);
     const label = el('text', {x:lp.x, y:lp.y, class:'tick-label'});
     label.textContent = year;
@@ -825,8 +834,9 @@ async function renderRing(){
     }
     lastDeg = deg;
 
+    const nodeRadius = R + offset;
     const base = pointOnRing(deg, R);
-    const p = offset ? pointOnRing(deg, R + offset) : base;
+    const p = offset ? pointOnRing(deg, nodeRadius) : base;
     if (offset) svg.appendChild(el('line', {x1:base.x, y1:base.y, x2:p.x, y2:p.y, class:'tick'}));
 
     const hasIcon = !!ev.icon;
@@ -842,6 +852,11 @@ async function renderRing(){
       svg.appendChild(icon);
     }
     svg.appendChild(hit);
+
+    const yp = pointOnRing(deg, nodeRadius + (hasIcon ? 22 : 14));
+    const yearLabel = el('text', {x:yp.x, y:yp.y, class:'event-year-label'});
+    yearLabel.textContent = ev.year;
+    svg.appendChild(yearLabel);
   });
 
   if (ringEventsCache.length === 0){
@@ -1308,13 +1323,13 @@ function openDetailSheet(ev){
   const isGreatman = ev.counterfactual !== undefined;
   document.getElementById('detailYear').textContent = ev.year + '年';
   document.getElementById('detailPerson').style.display = isGreatman ? 'flex' : 'none';
-  document.getElementById('detailIconReason').style.display = isGreatman ? '' : 'none';
+  document.getElementById('detailMnemonic').style.display = isGreatman ? '' : 'none';
   document.getElementById('detailTeaser').style.display = isGreatman ? 'none' : '';
   const portraitEl = document.getElementById('detailPortrait');
   if (isGreatman){
     document.getElementById('detailPersonIcon').textContent = ev.icon || '';
     document.getElementById('detailPersonName').textContent = ev.title;
-    document.getElementById('detailIconReason').textContent = ev.iconReason || '';
+    document.getElementById('detailMnemonic').textContent = ev.mnemonicImage || '';
   } else {
     document.getElementById('detailTeaser').textContent = ev.teaser;
   }
@@ -1329,6 +1344,7 @@ function openDetailSheet(ev){
   document.getElementById('detailBody').innerHTML = (ev.counterfactual !== undefined) ? `
     <p><span class="tag">何をした人か</span>${ev.whatTheyDid}</p>
     <p><span class="tag">詳細</span>${ev.factLayer}</p>
+    <p><span class="tag">アイコンの選定理由</span>${ev.iconReason}</p>
     <p><span class="tag">もし歴史が違ったら</span>${ev.counterfactual}</p>
   ` : `
     <p><span class="tag">事実レイヤー</span>${ev.factLayer}</p>
