@@ -288,14 +288,14 @@
   .card-teaser{font-size:14px;line-height:1.75;color:#4a3d30;margin-bottom:12px;}
   .card-place{font-size:11px;color:var(--muted-warm);margin-bottom:12px;}
   .card-fact{font-size:13px;line-height:1.75;color:#4a3d30;border-top:1px solid rgba(36,27,20,.15);padding-top:12px;}
-  .card-icon{font-size:34px;line-height:1;margin-bottom:2px;}
+  .card-icon{font-size:34px;line-height:1;margin-bottom:2px;text-align:center;}
   .card-ba{border-top:1px solid rgba(36,27,20,.15);padding-top:12px;}
   .card-ba p{font-size:13px;line-height:1.7;color:#4a3d30;margin:0 0 10px;}
   .card-ba p:last-child{margin-bottom:0;}
   .ba-tag{display:block;font-size:10px;letter-spacing:.14em;color:var(--ember-dim);margin-bottom:3px;}
   .card-portrait{
     display:block;width:56px;height:56px;border-radius:50%;
-    object-fit:cover;margin:0 0 12px;
+    object-fit:cover;margin:0 auto 12px;
     border:1px solid rgba(36,27,20,.15);
   }
 
@@ -900,15 +900,15 @@ const ONBOARD_SLIDES = [
   },
   {
     img: 'image/onboarding/step6.png',
-    body: '歴史も同じです！ 1500〜2000年を円状に割り当てます。'
+    body: '歴史も同じです！ 1500〜2000年を円状に割り当ててみます。'
   },
   {
     img: 'image/onboarding/step7.png',
-    body: '好きな偉人やできごとを置きます。'
+    body: '好きな偉人や歴史を年代にそっておきます。'
   },
   {
     img: 'image/onboarding/step8.png',
-    body: '一度身体で覚えると、忘れづらくなります！！'
+    body: '円にそって身体にのせるイメージを作ると完成！！'
   },
   {
     title: '歴史の宮殿',
@@ -1292,11 +1292,19 @@ const DEMO_THEME_IDS = ['greatman']; // デモ表示は「超有名な偉人」1
 
 let duelPickup = { pool: [], sessionPicks: [], round: 0, totalRounds: 0 };
 
+// iconReasonは「羅針盤 🧭：世界一周という航海の軌跡が...」のように、アイコンの
+// 日本語名＋絵文字＋説明という形式で書かれている。先頭の日本語名だけを取り出し、
+// 「<アイテム名>の<人物名>」というピックアップカード用の愛称を組み立てる。
+function pickupCardNickname(ev){
+  const label = (ev.iconReason || '').split('：')[0].replace(ev.icon || '', '').trim();
+  return label ? `${label}の${ev.title}` : ev.title;
+}
+
 function renderPickupCard(ev){
   return (ev.before !== undefined) ? `
     <div class="card-icon">${ev.icon || ''}</div>
     <div class="card-year tech">${ev.year}年</div>
-    <div class="card-title">${ev.title}</div>
+    <div class="card-title">${pickupCardNickname(ev)}</div>
     <div class="card-teaser">${ev.teaser}</div>
     ${ev.portrait ? `<img class="card-portrait" src="${ev.portrait}" alt="${ev.title}">` : ''}
     <div class="card-ba">
