@@ -406,6 +406,92 @@
     border:1px solid rgba(255,255,255,.15);
   }
   .palette-option .p-name{font-size:13px;color:var(--skin);}
+  .settings-panel .s-divider{height:1px;background:var(--instrument-dim);margin:6px 4px;}
+  .palette-option.s-danger .p-name{color:#c06a52;}
+  .palette-option.s-danger:hover{border-color:rgba(176,80,63,.4);}
+
+  /* ---------- onboarding (初回ウォークスルー) ---------- */
+  .onboard-scrim{
+    position:fixed;inset:0;z-index:40;
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    background:
+      radial-gradient(120% 90% at 50% 18%, var(--void-2) 0%, var(--void) 60%);
+    opacity:0;pointer-events:none;
+    transition:opacity .3s ease;
+  }
+  .onboard-scrim.show{opacity:1;pointer-events:auto;}
+  .onboard-card{
+    position:relative;width:min(88vw,380px);max-height:86vh;
+    display:flex;flex-direction:column;
+    background:linear-gradient(180deg, var(--skin) 0%, var(--skin-2) 100%);
+    color:var(--ink);border-radius:24px;
+    box-shadow:0 20px 60px rgba(0,0,0,.45);
+    padding:20px 24px calc(env(safe-area-inset-bottom,0px) + 22px);
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  .onboard-skip{
+    position:absolute;top:16px;right:16px;
+    appearance:none;border:none;background:none;cursor:pointer;
+    font-size:12px;letter-spacing:.06em;color:var(--muted-warm);
+    padding:6px 8px;
+  }
+  .onboard-illust{
+    height:180px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    margin:18px 0 6px;
+  }
+  .onboard-illust img{max-width:100%;max-height:100%;object-fit:contain;}
+  .onboard-eyebrow{
+    font-size:11px;letter-spacing:.14em;color:var(--ember-dim);text-align:center;
+    margin-bottom:8px;
+  }
+  .onboard-title{
+    font-size:21px;line-height:1.5;color:var(--ink);text-align:center;
+    margin:8px 0 4px;
+  }
+  .onboard-body{
+    font-size:15px;line-height:1.85;color:var(--ink);text-align:center;
+    margin:0 0 6px;
+  }
+  .onboard-dots{padding-top:6px;}
+  .onboard-nav{
+    flex:0 0 auto;padding-top:16px;
+    display:flex;justify-content:center;gap:10px;
+  }
+
+  /* ---------- coachmark (操作ガイド・スポットライト) ---------- */
+  .coach-overlay{
+    position:fixed;inset:0;z-index:20;
+    pointer-events:none;
+    opacity:0;transition:opacity .3s ease;
+  }
+  .coach-overlay.show{opacity:1;}
+  .coach-ring{
+    position:absolute;pointer-events:none;
+    border:2px solid var(--ember);
+    box-shadow:0 0 0 3000px rgba(6,8,9,.6), 0 0 26px rgba(224,136,80,.55);
+    transition:left .35s ease, top .35s ease, width .35s ease, height .35s ease;
+    animation:coachPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes coachPulse{
+    0%,100%{box-shadow:0 0 0 3000px rgba(6,8,9,.6), 0 0 18px rgba(224,136,80,.4);}
+    50%{box-shadow:0 0 0 3000px rgba(6,8,9,.6), 0 0 30px rgba(224,136,80,.75);}
+  }
+  .coach-tip{
+    position:absolute;max-width:min(72vw,260px);
+    background:linear-gradient(180deg, var(--skin) 0%, var(--skin-2) 100%);
+    color:var(--ink);border-radius:16px;
+    padding:14px 16px 12px;
+    box-shadow:0 14px 36px rgba(0,0,0,.4);
+    pointer-events:auto;
+  }
+  .coach-text{font-size:14px;line-height:1.75;margin-bottom:8px;}
+  .coach-dismiss{
+    appearance:none;border:none;background:none;cursor:pointer;
+    font-family:inherit;font-size:12px;letter-spacing:.06em;
+    color:var(--ember-dim);padding:0;display:block;margin-left:auto;
+  }
 
   /* ---------- level badge (ring screen header) ---------- */
   .level-badge{
@@ -504,6 +590,14 @@
   <div class="settings-panel" id="settingsPanel">
     <div class="s-title tech">テーマカラー</div>
     <div id="paletteList"></div>
+    <div class="s-divider"></div>
+    <button class="palette-option tech" id="replayOnboardBtn">
+      <span class="p-name">使い方を見る</span>
+    </button>
+    <div class="s-divider"></div>
+    <button class="palette-option tech s-danger" id="resetDataBtn">
+      <span class="p-name">データをリセット</span>
+    </button>
   </div>
 
   <!-- ============ Screen 1: 円環UI画面（メイン） ============ -->
@@ -565,6 +659,31 @@
         <div class="quiz-result-title tech" id="quizResultTitle"></div>
       </div>
       <button class="fab tech" id="quizResultContinueBtn" style="display:none;">つづける</button>
+    </div>
+  </div>
+
+  <!-- ============ 初回オンボーディング（ウォークスルー） ============ -->
+  <div class="onboard-scrim" id="onboardScrim">
+    <div class="onboard-card">
+      <button class="onboard-skip tech" id="onboardSkipBtn">スキップ</button>
+      <div class="onboard-illust" id="onboardIllust"></div>
+      <div class="onboard-eyebrow tech" id="onboardEyebrow"></div>
+      <div class="onboard-title" id="onboardTitle"></div>
+      <div class="onboard-body" id="onboardBody"></div>
+      <div class="dots onboard-dots" id="onboardDots"></div>
+      <div class="onboard-nav">
+        <button class="secondary-btn tech" id="onboardBackBtn">もどる</button>
+        <button class="primary-btn enabled tech" id="onboardNextBtn">次へ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ コーチマーク（操作ガイド・スポットライト） ============ -->
+  <div class="coach-overlay" id="coachOverlay">
+    <div class="coach-ring" id="coachRing"></div>
+    <div class="coach-tip" id="coachTip">
+      <div class="coach-text" id="coachText"></div>
+      <button class="coach-dismiss tech" id="coachDismissBtn">わかった</button>
     </div>
   </div>
 
@@ -750,6 +869,229 @@ document.getElementById('settingsBtn').addEventListener('click', () => {
 });
 
 /* ==================================================================
+   初回オンボーディング（ウォークスルー・カルーセル）
+   ================================================================== */
+const ONBOARD_KEY = 'rekishiNoKyuden.onboarded.v1';
+
+const ONBOARD_SLIDES = [
+  {
+    title: 'ようこそ',
+    body: 'このアプリは、記憶力のテクニックを駆使して、歴史を覚えよう！というアプリです。'
+  },
+  {
+    img: 'image/onboarding/step1.png',
+    body: 'ただ並べただけの情報は、おぼえづらいものです。'
+  },
+  {
+    img: 'image/onboarding/step2.png',
+    body: 'まずは、円状に並べてみましょう。'
+  },
+  {
+    img: 'image/onboarding/step3.png',
+    body: 'それぞれの位置に、イメージを置いていきます。'
+  },
+  {
+    img: 'image/onboarding/step4.png',
+    body: '円の中心に、自分の身体を置いてみます。'
+  },
+  {
+    img: 'image/onboarding/step5.png',
+    body: '身体に覚えたいものを乗せるイメージを持ちます。記憶が定着しやすくなります！'
+  },
+  {
+    img: 'image/onboarding/step6.png',
+    body: '歴史も同じです！ 1500〜2000年を円状に割り当てます。'
+  },
+  {
+    img: 'image/onboarding/step7.png',
+    body: '好きな偉人やできごとを置きます。'
+  },
+  {
+    img: 'image/onboarding/step8.png',
+    body: '一度身体で覚えると、忘れづらくなります！！'
+  },
+  {
+    title: '歴史の宮殿',
+    body: 'さあ、はじめてみましょう。',
+    cta: 'はじめる'
+  }
+];
+
+let onboardIndex = 0;
+
+function hasOnboarded(){
+  try{ return localStorage.getItem(ONBOARD_KEY) === '1'; }
+  catch(e){ return true; }
+}
+function markOnboarded(){
+  try{ localStorage.setItem(ONBOARD_KEY, '1'); }catch(e){}
+}
+
+function renderOnboardSlide(){
+  const s = ONBOARD_SLIDES[onboardIndex];
+
+  const eyebrowEl = document.getElementById('onboardEyebrow');
+  eyebrowEl.textContent = s.eyebrow || '';
+  eyebrowEl.style.display = s.eyebrow ? '' : 'none';
+
+  const titleEl = document.getElementById('onboardTitle');
+  titleEl.textContent = s.title || '';
+  titleEl.style.display = s.title ? '' : 'none';
+
+  document.getElementById('onboardBody').textContent = s.body;
+
+  const illust = document.getElementById('onboardIllust');
+  illust.innerHTML = '';
+  illust.style.display = s.img ? '' : 'none';
+  if (s.img){
+    const img = document.createElement('img');
+    img.src = s.img;
+    img.alt = '';
+    illust.appendChild(img);
+  }
+
+  const dots = document.getElementById('onboardDots');
+  dots.innerHTML = '';
+  ONBOARD_SLIDES.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < onboardIndex ? ' filled' : i === onboardIndex ? ' current' : '');
+    dots.appendChild(d);
+  });
+
+  document.getElementById('onboardBackBtn').style.visibility = onboardIndex === 0 ? 'hidden' : 'visible';
+  document.getElementById('onboardNextBtn').textContent = s.cta || '次へ';
+}
+
+function openOnboarding(){
+  onboardIndex = 0;
+  renderOnboardSlide();
+  document.getElementById('onboardScrim').classList.add('show');
+}
+function closeOnboarding(){
+  document.getElementById('onboardScrim').classList.remove('show');
+  markOnboarded();
+  maybeShowFabCoachmark();
+}
+
+document.getElementById('onboardNextBtn').addEventListener('click', () => {
+  if (onboardIndex >= ONBOARD_SLIDES.length - 1){
+    closeOnboarding();
+  } else {
+    onboardIndex += 1;
+    renderOnboardSlide();
+  }
+});
+document.getElementById('onboardBackBtn').addEventListener('click', () => {
+  if (onboardIndex > 0){
+    onboardIndex -= 1;
+    renderOnboardSlide();
+  }
+});
+document.getElementById('onboardSkipBtn').addEventListener('click', closeOnboarding);
+
+document.getElementById('replayOnboardBtn').addEventListener('click', () => {
+  document.getElementById('settingsPanel').classList.remove('open');
+  openOnboarding();
+});
+
+document.getElementById('resetDataBtn').addEventListener('click', () => {
+  const ok = confirm('円環に記憶した出来事・レベルなど、すべてのデータをリセットします。よろしいですか？');
+  if (!ok) return;
+  try{
+    localStorage.removeItem(RING_KEY);
+    localStorage.removeItem(LEVEL_KEY);
+    localStorage.removeItem(ONBOARD_KEY);
+    localStorage.removeItem(COACH_KEY);
+  }catch(e){}
+  location.reload();
+});
+
+/* ==================================================================
+   コーチマーク（操作ガイド・スポットライト）
+   ================================================================== */
+const COACH_KEY = 'rekishiNoKyuden.coachSeen.v1';
+
+function loadCoachSeen(){
+  try{
+    const raw = localStorage.getItem(COACH_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function hasSeenCoach(id){
+  return !!loadCoachSeen()[id];
+}
+function markCoachSeen(id){
+  try{
+    const seen = loadCoachSeen();
+    seen[id] = true;
+    localStorage.setItem(COACH_KEY, JSON.stringify(seen));
+  }catch(e){}
+}
+
+let coachActiveTarget = null;
+let coachActivePlacement = 'top';
+
+function positionCoachmark(){
+  if (!coachActiveTarget || !document.body.contains(coachActiveTarget)) return;
+  const rect = coachActiveTarget.getBoundingClientRect();
+  const pad = 10;
+  const ring = document.getElementById('coachRing');
+  const isRound = coachActiveTarget.tagName === 'circle' ||
+    getComputedStyle(coachActiveTarget).borderRadius === '50%';
+  ring.style.borderRadius = isRound ? '50%' : '16px';
+  ring.style.left = (rect.left - pad) + 'px';
+  ring.style.top = (rect.top - pad) + 'px';
+  ring.style.width = (rect.width + pad * 2) + 'px';
+  ring.style.height = (rect.height + pad * 2) + 'px';
+
+  const tip = document.getElementById('coachTip');
+  const tipRect = tip.getBoundingClientRect();
+  let top = coachActivePlacement === 'top'
+    ? rect.top - pad - tipRect.height - 14
+    : rect.bottom + pad + 14;
+  top = Math.max(12, Math.min(top, window.innerHeight - tipRect.height - 12));
+  let left = rect.left + rect.width / 2 - tipRect.width / 2;
+  left = Math.max(16, Math.min(left, window.innerWidth - tipRect.width - 16));
+  tip.style.left = left + 'px';
+  tip.style.top = top + 'px';
+}
+window.addEventListener('resize', () => {
+  if (document.getElementById('coachOverlay').classList.contains('show')) positionCoachmark();
+});
+
+function showCoachmark(target, text, placement){
+  if (!target) return;
+  coachActiveTarget = target;
+  coachActivePlacement = placement || 'top';
+  document.getElementById('coachText').textContent = text;
+  document.getElementById('coachOverlay').classList.add('show');
+  positionCoachmark();
+}
+function hideCoachmark(){
+  document.getElementById('coachOverlay').classList.remove('show');
+  coachActiveTarget = null;
+}
+document.getElementById('coachDismissBtn').addEventListener('click', hideCoachmark);
+
+function maybeShowFabCoachmark(){
+  if (hasSeenCoach('fab') || ringEventsCache.length > 0) return;
+  markCoachSeen('fab');
+  showCoachmark(document.getElementById('fabBtn'), 'ここから、最初の出来事を選びましょう', 'top');
+}
+function maybeShowPickupCoachmark(){
+  if (hasSeenCoach('pickup')) return;
+  markCoachSeen('pickup');
+  showCoachmark(document.getElementById('pickupStage'), '気になる方をタップして選んでください。ここで選んだ感覚が、あとで身体に刻まれます。', 'bottom');
+}
+function maybeShowNodeCoachmark(ids){
+  if (hasSeenCoach('node') || !ids.length) return;
+  const node = svg.querySelector(`.node-hit[data-id="${ids[0]}"]`);
+  if (!node) return;
+  markCoachSeen('node');
+  showCoachmark(node, 'タップして、その感覚を確かめてみてください', 'top');
+}
+
+/* ==================================================================
    Screen 1 — 円環UI画面
    ================================================================== */
 const YEAR_MIN = 1500, YEAR_MAX = 2000;
@@ -877,6 +1219,7 @@ async function renderRing(){
 }
 
 document.getElementById('fabBtn').addEventListener('click', () => {
+  hideCoachmark();
   if (fabMode === 'quiz') startQuiz();
   else startPickup();
 });
@@ -981,6 +1324,7 @@ async function startPickup(){
   duelPickup = { pool: candidates, sessionPicks: [], round: 0, totalRounds };
   showScreen('screen-pickup');
   renderPickupRound();
+  maybeShowPickupCoachmark();
 }
 
 function renderPickupRound(){
@@ -1023,6 +1367,7 @@ function renderPickupRound(){
 }
 
 function choosePickupOption(ev){
+  hideCoachmark();
   duelPickup.sessionPicks.push(ev);
   duelPickup.round += 1;
   renderPickupRound();
@@ -1061,6 +1406,7 @@ async function finishCenturyPickup(){
   showScreen('screen-ring');
   await renderRing();
   highlightNewEvents(newIds);
+  maybeShowNodeCoachmark(newIds);
 }
 
 function highlightNewEvents(ids){
@@ -1319,6 +1665,7 @@ const scrim = document.getElementById('scrim');
 let activeEventId = null;
 
 function openDetailSheet(ev){
+  hideCoachmark();
   activeEventId = ev.id;
   const isGreatman = ev.counterfactual !== undefined;
   document.getElementById('detailYear').textContent = ev.year + '年';
@@ -1394,6 +1741,8 @@ document.getElementById('deleteBtn').addEventListener('click', () => {
   ringList = loadRingList();
   playerLevel = loadPlayerLevel();
   await renderRing();
+  if (!hasOnboarded()) openOnboarding();
+  else maybeShowFabCoachmark();
 })();
 </script>
 </body>
