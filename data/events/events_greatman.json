@@ -16,7 +16,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "羅針盤 🧭：世界一周という航海の軌跡が、方位を示す針の円環と重なることから。",
-    "mnemonicImage": "左耳の耳穴に羅針盤が埋め込まれているイメージ。",
+    "bodyPart": "左耳の穴",
+    "mnemonicImage": "左耳の穴に羅針盤が埋め込まれているイメージ。",
     "portrait": "image/portraits/magellan.jpg"
   },
   {
@@ -36,7 +37,8 @@
     "reviewNote": "無敵艦隊の海戦という戦争に関わる出来事。実際の兵士の死ではなく歴史的な結果（撃退・海軍国化）に焦点を当てている。出来事自体は400年以上前で当事者は存命ではない。",
     "sourceUrls": [],
     "iconReason": "剣 🗡️：無敵艦隊を打ち破った海戦の象徴として。",
-    "mnemonicImage": "左手の甲に短剣が突き刺さっているイメージ。",
+    "bodyPart": "左前腕（ひじ寄り）",
+    "mnemonicImage": "左の前腕、ひじに近いあたりに短剣が突き刺さっているイメージ。",
     "portrait": "image/portraits/elizabeth.jpg"
   },
   {
@@ -56,6 +58,7 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "望遠鏡 🔭：本人が自作し、天体観測に使った発明品そのものから。",
+    "bodyPart": "左手首",
     "mnemonicImage": "左手首に望遠鏡がぶら下がっているイメージ。",
     "portrait": "image/portraits/galileo.jpg"
   },
@@ -76,7 +79,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "りんご 🍎：万有引力を思いついたという有名な逸話から。",
-    "mnemonicImage": "左足の親指の上にリンゴがちょこんと乗っているイメージ。",
+    "bodyPart": "左外ふくらはぎ（下）",
+    "mnemonicImage": "左のふくらはぎの外側、足首に近いあたりにリンゴがぶつかってくるイメージ。",
     "portrait": "image/portraits/newton.jpg"
   },
   {
@@ -96,7 +100,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "雷 ⚡：凧を使った実験で、雷の正体が電気であることを確かめたことから。",
-    "mnemonicImage": "おへその真ん中に雷が走っているイメージ。",
+    "bodyPart": "股下",
+    "mnemonicImage": "股下に雷が走り抜けるイメージ。",
     "portrait": "image/portraits/franklin.jpg"
   },
   {
@@ -116,7 +121,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "沸騰したやかん 🫖：やかんの蓋が蒸気で持ち上がるのを見て蒸気機関を思いついたという逸話から。",
-    "mnemonicImage": "おへその少し下に、熱々のやかんが押し当てられているイメージ。",
+    "bodyPart": "右内ふくらはぎ（もも寄り）",
+    "mnemonicImage": "右のふくらはぎの内側、もも寄りのあたりに熱々のやかんが押し当てられているイメージ。",
     "portrait": "image/portraits/watt.jpg"
   },
   {
@@ -136,7 +142,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "見えざる手 ✋：本人が著書で使った「見えざる手」という比喩そのものから。",
-    "mnemonicImage": "右の太もものつけ根に、見えない手のひらがそっと触れているイメージ。",
+    "bodyPart": "右内ふくらはぎ",
+    "mnemonicImage": "右のふくらはぎの内側に、見えない手のひらがそっと触れているイメージ。",
     "portrait": "image/portraits/adam_smith.jpg"
   },
   {
@@ -156,7 +163,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "注射針 💉：種痘（ワクチン接種）そのものの象徴として。",
-    "mnemonicImage": "右足の親指に注射針がぷすっと刺さっているイメージ。",
+    "bodyPart": "右足の親指のつま先",
+    "mnemonicImage": "右足の親指のつま先に注射針がぷすっと刺さっているイメージ。",
     "portrait": "image/portraits/jenner.jpg"
   },
   {
@@ -176,7 +184,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "王冠 👑：フランス皇帝として戴冠したことの象徴として。",
-    "mnemonicImage": "右足の小指に小さな王冠がちょこんと乗っているイメージ。",
+    "bodyPart": "右足の小指のつま先",
+    "mnemonicImage": "右足の小指のつま先に小さな王冠がちょこんと乗っているイメージ。",
     "portrait": "image/portraits/napoleon.jpg"
   },
   {
@@ -196,7 +205,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "ランプ 🪔：「ランプを持つ貴婦人」と呼ばれた異名から。",
-    "mnemonicImage": "右の腰骨のあたりに、小さなランプの灯りがぼうっと灯っているイメージ。",
+    "bodyPart": "右外もも（上）",
+    "mnemonicImage": "右の外もも、こしに近いあたりに小さなランプの灯りがぼうっと灯っているイメージ。",
     "portrait": "image/portraits/nightingale.jpg"
   },
   {
@@ -216,7 +226,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "猿 🐒：「人間はサルから進化した」という広く知られた進化論のイメージから。",
-    "mnemonicImage": "右脇腹に猿がしがみついているイメージ。",
+    "bodyPart": "右こしの下",
+    "mnemonicImage": "右のこしの下、もものつけ根のあたりに猿がしがみついているイメージ。",
     "portrait": "image/portraits/darwin.jpg"
   },
   {
@@ -236,7 +247,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "電球 💡：実用的な電球を発明したことそのものから。",
-    "mnemonicImage": "右手のひらの真ん中に電球がぽっと光っているイメージ。",
+    "bodyPart": "右脇腹（下）",
+    "mnemonicImage": "右の脇腹、下の方に電球がぽっと光っているイメージ。",
     "portrait": "image/portraits/edison.jpg"
   },
   {
@@ -256,6 +268,7 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "舌 👅：舌を出した有名な写真のポーズから。",
+    "bodyPart": "右手の指先",
     "mnemonicImage": "右手の指先に舌がぺろりと乗っているイメージ。",
     "portrait": "image/portraits/einstein.jpeg"
   },
@@ -276,7 +289,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "カビたみかん 🍊：培養中のカビからペニシリンを発見したという逸話を果物に置き換えて。",
-    "mnemonicImage": "右の二の腕の内側にみかんがくっつき、白いカビが生えているイメージ。",
+    "bodyPart": "右二の腕（ひじ寄り）",
+    "mnemonicImage": "右の二の腕、ひじに近いあたりにみかんがくっつき、白いカビが生えているイメージ。",
     "portrait": "image/portraits/fleming.jpg"
   },
   {
@@ -296,7 +310,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "ロケット 🚀：月面着陸を実現した乗り物そのものから。",
-    "mnemonicImage": "右肩からロケットが勢いよく打ち上げられていくイメージ。",
+    "bodyPart": "右耳の下",
+    "mnemonicImage": "右耳の下からロケットが勢いよく打ち上げられていくイメージ。",
     "portrait": "image/portraits/armstrong.jpg"
   },
   {
@@ -316,7 +331,8 @@
     "reviewNote": "アパルトヘイトは終結から30年程度と比較的近年の出来事であり、当事者・関係者が存命の可能性がある。人物自体は死去済み（2013年）のため「超有名な偉人」カテゴリの条件は満たす。要レビューのまま採用でユーザー承認済み。",
     "sourceUrls": [],
     "iconReason": "鎖 ⛓️：27年におよぶ投獄の象徴として。",
-    "mnemonicImage": "頭のてっぺんに鎖がぐるぐる巻きついているイメージ。",
+    "bodyPart": "頭部右側",
+    "mnemonicImage": "頭の右側に鎖がぐるぐる巻きついているイメージ。",
     "portrait": "image/portraits/mandela.jpg"
   },
   {
@@ -336,7 +352,8 @@
     "reviewNote": "桶狭間の戦いという合戦そのものを扱う出来事。実際の死傷描写ではなく「奇襲・戦術」という結果と、本能寺の変の逸話に基づく「炎」という象徴物に焦点を当てている。出来事自体は460年以上前で当事者は存命ではない。要レビューのまま採用でユーザー承認済み。",
     "sourceUrls": [],
     "iconReason": "炎 🔥：本能寺の変で自ら火を放って最期を迎えたという逸話から。",
-    "mnemonicImage": "左の二の腕に炎が燃え移っているイメージ。",
+    "bodyPart": "左二の腕（肩寄り）",
+    "mnemonicImage": "左の二の腕、肩に近いあたりに炎が燃え移っているイメージ。",
     "portrait": "image/portraits/nobunaga.jpg"
   },
   {
@@ -356,7 +373,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "ネズミ 🐀：当時秀吉は織田信長から「ハゲネズミ」と呼ばれていたことから。",
-    "mnemonicImage": "左手の指の間をねずみが駆け抜けていくイメージ。",
+    "bodyPart": "左前腕（手首寄り）",
+    "mnemonicImage": "左の前腕、手首に近いあたりをねずみが駆け抜けていくイメージ。",
     "portrait": "image/portraits/hideyoshi.webp"
   },
   {
@@ -376,7 +394,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "葵の葉 🍃：徳川家の家紋「三つ葉葵」は徳川を象徴する最も有名な視覚シンボルであることから。",
-    "mnemonicImage": "左手のひらに葉っぱが一枚、そっと舞い落ちてくるイメージ。",
+    "bodyPart": "左手の先",
+    "mnemonicImage": "左手の先に葉っぱが一枚、そっと乗っているイメージ。",
     "portrait": "image/portraits/ieyasu.jpg"
   },
   {
@@ -396,7 +415,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "メス 🔪：「解体新書」という解剖学書を翻訳したことから。",
-    "mnemonicImage": "右の下腹部にナイフの切っ先が軽く触れているイメージ。",
+    "bodyPart": "右内ふくらはぎ（足首寄り）",
+    "mnemonicImage": "右のふくらはぎの内側、足首に近いあたりにナイフの切っ先が軽く触れているイメージ。",
     "portrait": "image/portraits/genpaku.webp"
   },
   {
@@ -416,7 +436,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "地図 🗺️：17年かけて日本全国を測量し、日本地図を完成させたことそのものから。",
-    "mnemonicImage": "右足の甲に日本地図がぴったり貼りついているイメージ。",
+    "bodyPart": "右外ふくらはぎ（下）",
+    "mnemonicImage": "右のふくらはぎの外側、足首に近いあたりに日本地図がぴったり貼りついているイメージ。",
     "portrait": "image/portraits/tadataka.jpg"
   },
   {
@@ -436,7 +457,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "ピストル 🔫：刀ではなく西洋式のピストルを愛用していたという有名な逸話から。",
-    "mnemonicImage": "右の腰にピストルの銃口がぐっと押し当てられているイメージ。",
+    "bodyPart": "右こし（下寄り）",
+    "mnemonicImage": "右のこし、少し下寄りのあたりにピストルの銃口がぐっと押し当てられているイメージ。",
     "portrait": "image/portraits/ryouma.jpg"
   },
   {
@@ -456,7 +478,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "お札 💴：一万円札の顔として長年親しまれてきたことから。",
-    "mnemonicImage": "右の肋骨の隙間にお札が挟み込まれているイメージ。",
+    "bodyPart": "右こし（脇腹寄り）",
+    "mnemonicImage": "右のこし、脇腹に近いあたりにお札が挟み込まれているイメージ。",
     "portrait": "image/portraits/yukichi.webp"
   },
   {
@@ -476,6 +499,7 @@
     "reviewNote": "日露戦争という戦争を扱う出来事。実際の戦闘・死傷ではなく「掲げた旗（Z旗）」という象徴に焦点を当てている。出来事自体は120年以上前で当事者は存命ではない。要レビューのまま採用でユーザー承認済み。",
     "sourceUrls": [],
     "iconReason": "旗 🚩：開戦時に掲げた「Z旗（皇国の興廃この一戦にあり）」という有名な逸話から。",
+    "bodyPart": "右手の甲",
     "mnemonicImage": "右手の甲に小さな旗が突き立てられているイメージ。",
     "portrait": "image/portraits/togo.jpg"
   },
@@ -496,7 +520,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "メダル 🏅：日本人初のノーベル賞受賞という功績そのものから。",
-    "mnemonicImage": "右の二の腕にメダルがぶら下げられているイメージ。",
+    "bodyPart": "右肩の上",
+    "mnemonicImage": "右肩の上にメダルがちょこんと乗っているイメージ。",
     "portrait": "image/portraits/yukawa.jpg"
   },
   {
@@ -516,7 +541,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "バイク 🏍️：世界のレースに挑んだホンダの原点となった乗り物であることから。",
-    "mnemonicImage": "右肘の少し上を、ミニチュアのバイクが走り抜けていくイメージ。",
+    "bodyPart": "右首すじ",
+    "mnemonicImage": "右の首すじをミニチュアのバイクが走り抜けていくイメージ。",
     "portrait": "image/portraits/honda.jpg"
   }
 ]
