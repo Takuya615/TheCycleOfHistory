@@ -1118,53 +1118,40 @@ function el(tag, attrs){
 let ringEventsCache = [];
 
 function buildBodySilhouette(){
-  // A deliberately generic, unlabeled ピクトグラム (raised-arms pictogram), inscribed
-  // loosely within the ring. It's meant only as ambient texture suggesting "a body
-  // sits behind this circle" — it must never label or imply which exact point maps
-  // to which exact joint; that mapping stays entirely up to the user's imagination.
-  // The two arm tips are the one deliberate exception: they're pinned to the ring's
-  // 1600 (screen-right) and 1900 (screen-left) angular positions, as if the figure
-  // faces the viewer with both arms raised along the circle (anatomical left hand →
-  // screen-right → 1600, anatomical right hand → screen-left → 1900) — but, like the
-  // leg tips, stopped at LIMB_REACH rather than the ring line itself. The navel (torso
-  // bottom) is pinned to the ring's own center point (2026-09-24: raised-arms pose,
-  // navel at ring center).
+  // A deliberately generic, unlabeled ピクトグラム, inscribed loosely within the
+  // ring. It's meant only as ambient texture suggesting "a body sits behind this
+  // circle" — it must never label or imply which exact point maps to which exact
+  // joint; that mapping stays entirely up to the user's imagination. The one
+  // deliberate exception: both arms point along the ring's 1600 (screen-right) and
+  // 1900 (screen-left) angular directions, as if the figure faces the viewer with
+  // arms raised toward those angles (anatomical left hand → screen-right → 1600,
+  // anatomical right hand → screen-left → 1900) — a single straight segment at a
+  // natural arm length, not stretched to actually reach the ring line.
   const g = el('g', {class:'body-silhouette'});
   // Proportions modeled loosely after simplified pictogram figures (restroom/DOT
   // signage style): head ≈ 1 unit, torso ≈ 1.2 head-diameters, legs the longest
-  // segment. A natural straight shoulder-to-hand line can't reach up to 1600/1900
-  // (they sit only ~18° above the ring's horizontal diameter, which is lower than a
-  // naturally placed shoulder) — so each arm bends at an elbow: the upper arm drops
-  // out from the shoulder, then the forearm angles sharply back up to the hand,
-  // reading as "raised" the way a bent, waving arm does.
-  const HEAD_R = 26, NECK_GAP = 6, TORSO_LEN = 62;
+  // segment.
+  const HEAD_R = 26, NECK_GAP = 6, TORSO_LEN = 62, ARM_LEN = 140;
   const navelY = CY; // おへそ（胴体の下端）を円環の中心に合わせる
   const torsoTop = navelY - TORSO_LEN;
   const headCY = torsoTop - NECK_GAP - HEAD_R;
   const shoulderY = torsoTop; // 腕は肩（胴体の最上部）から出す
-  const LIMB_REACH = R - 20; // hand tips stay clear of the ring's edge
-  const ELBOW_DROP = 70;     // upper arm angles down-and-out from the shoulder...
-  const ELBOW_T = 0.7;       // ...to an elbow most of the way to the hand, which then bends sharply up
+  const LIMB_REACH = R - 20; // leg tips stay clear of the ring's edge
 
-  function raisedArm(handX, handY, sign){
-    const elbowX = CX + sign * Math.abs(handX - CX) * ELBOW_T;
-    const elbowY = shoulderY + ELBOW_DROP;
-    return [
-      el('line', {x1:CX, y1:shoulderY, x2:elbowX, y2:elbowY}),
-      el('line', {x1:elbowX, y1:elbowY, x2:handX, y2:handY})
-    ];
+  function armTip(deg, length){
+    const rad = (deg - 90) * Math.PI / 180;
+    return { x: CX + length * Math.cos(rad), y: shoulderY + length * Math.sin(rad) };
   }
-
-  const leftHand = pointOnRing(angleForYear(1900), LIMB_REACH);
-  const rightHand = pointOnRing(angleForYear(1600), LIMB_REACH);
+  const leftHand = armTip(angleForYear(1900), ARM_LEN);
+  const rightHand = armTip(angleForYear(1600), ARM_LEN);
   // Leg tips: same splay angle as before, scaled in from the ring line to LIMB_REACH.
   const legScale = LIMB_REACH / Math.hypot(115, 175);
   const legDX = 115 * legScale, legDY = 175 * legScale;
 
   g.appendChild(el('circle', {cx:CX, cy:headCY, r:HEAD_R}));                                                     // head
   g.appendChild(el('line', {x1:CX, y1:torsoTop, x2:CX, y2:navelY}));                                             // torso
-  raisedArm(leftHand.x, leftHand.y, -1).forEach(seg => g.appendChild(seg));                                      // raised left arm → 1900
-  raisedArm(rightHand.x, rightHand.y, 1).forEach(seg => g.appendChild(seg));                                     // raised right arm → 1600
+  g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:leftHand.x, y2:leftHand.y}));                                // left arm, toward 1900
+  g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:rightHand.x, y2:rightHand.y}));                              // right arm, toward 1600
   g.appendChild(el('line', {x1:CX, y1:navelY, x2:CX - legDX, y2:CY + legDY}));                                   // left leg
   g.appendChild(el('line', {x1:CX, y1:navelY, x2:CX + legDX, y2:CY + legDY}));                                   // right leg
   return g;
