@@ -122,7 +122,7 @@
     "sourceUrls": [],
     "iconReason": "沸騰したやかん 🫖：やかんの蓋が蒸気で持ち上がるのを見て蒸気機関を思いついたという逸話から。",
     "bodyPart": "右内ふくらはぎ（もも寄り）",
-    "mnemonicImage": "右のふくらはぎの内側、もも寄りのあたりに熱々のやかんが押し当てられているイメージ。",
+    "mnemonicImage": "右のふくらはぎの内側、ももに近いあたりに熱々のやかんが押し当てられているイメージ。",
     "portrait": "image/portraits/watt.jpg"
   },
   {
@@ -142,8 +142,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "見えざる手 ✋：本人が著書で使った「見えざる手」という比喩そのものから。",
-    "bodyPart": "右内ふくらはぎ",
-    "mnemonicImage": "右のふくらはぎの内側に、見えない手のひらがそっと触れているイメージ。",
+    "bodyPart": "右内くるぶし",
+    "mnemonicImage": "右の内くるぶしに、見えない手のひらがそっと触れているイメージ。",
     "portrait": "image/portraits/adam_smith.jpg"
   },
   {
@@ -163,8 +163,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "注射針 💉：種痘（ワクチン接種）そのものの象徴として。",
-    "bodyPart": "右足の親指のつま先",
-    "mnemonicImage": "右足の親指のつま先に注射針がぷすっと刺さっているイメージ。",
+    "bodyPart": "右外くるぶし（つま先寄り）",
+    "mnemonicImage": "右の外くるぶし、つま先に近いあたりに注射針がぷすっと刺さっているイメージ。",
     "portrait": "image/portraits/jenner.jpg"
   },
   {
@@ -184,8 +184,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "王冠 👑：フランス皇帝として戴冠したことの象徴として。",
-    "bodyPart": "右足の小指のつま先",
-    "mnemonicImage": "右足の小指のつま先に小さな王冠がちょこんと乗っているイメージ。",
+    "bodyPart": "右外くるぶし（ふくらはぎ寄り）",
+    "mnemonicImage": "右の外くるぶし、ふくらはぎに近いあたりに小さな王冠がちょこんと乗っているイメージ。",
     "portrait": "image/portraits/napoleon.jpg"
   },
   {
@@ -205,8 +205,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "ランプ 🪔：「ランプを持つ貴婦人」と呼ばれた異名から。",
-    "bodyPart": "右外もも（上）",
-    "mnemonicImage": "右の外もも、こしに近いあたりに小さなランプの灯りがぼうっと灯っているイメージ。",
+    "bodyPart": "右こしの下",
+    "mnemonicImage": "右のこしの下のあたりに、小さなランプの灯りがぼうっと灯っているイメージ。",
     "portrait": "image/portraits/nightingale.jpg"
   },
   {
@@ -226,8 +226,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "猿 🐒：「人間はサルから進化した」という広く知られた進化論のイメージから。",
-    "bodyPart": "右こしの下",
-    "mnemonicImage": "右のこしの下、もものつけ根のあたりに猿がしがみついているイメージ。",
+    "bodyPart": "右こし",
+    "mnemonicImage": "右のこしに猿がしがみついているイメージ。",
     "portrait": "image/portraits/darwin.jpg"
   },
   {
@@ -247,8 +247,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "電球 💡：実用的な電球を発明したことそのものから。",
-    "bodyPart": "右脇腹（下）",
-    "mnemonicImage": "右の脇腹、下の方に電球がぽっと光っているイメージ。",
+    "bodyPart": "右脇腹（上）",
+    "mnemonicImage": "右の脇腹の上のほうに電球がぽっと光っているイメージ。",
     "portrait": "image/portraits/edison.jpg"
   },
   {
@@ -436,8 +436,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "地図 🗺️：17年かけて日本全国を測量し、日本地図を完成させたことそのものから。",
-    "bodyPart": "右外ふくらはぎ（下）",
-    "mnemonicImage": "右のふくらはぎの外側、足首に近いあたりに日本地図がぴったり貼りついているイメージ。",
+    "bodyPart": "右外ふくらはぎ（上）",
+    "mnemonicImage": "右のふくらはぎの外側、上のほうに日本地図がぴったり貼りついているイメージ。",
     "portrait": "image/portraits/tadataka.jpg"
   },
   {
@@ -457,8 +457,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "ピストル 🔫：刀ではなく西洋式のピストルを愛用していたという有名な逸話から。",
-    "bodyPart": "右こし（下寄り）",
-    "mnemonicImage": "右のこし、少し下寄りのあたりにピストルの銃口がぐっと押し当てられているイメージ。",
+    "bodyPart": "右脇腹（下部、こし寄り）",
+    "mnemonicImage": "右の脇腹の下のほう、こしに近いあたりにピストルの銃口がぐっと押し当てられているイメージ。",
     "portrait": "image/portraits/ryouma.jpg"
   },
   {
@@ -478,8 +478,8 @@
     "reviewNote": null,
     "sourceUrls": [],
     "iconReason": "お札 💴：一万円札の顔として長年親しまれてきたことから。",
-    "bodyPart": "右こし（脇腹寄り）",
-    "mnemonicImage": "右のこし、脇腹に近いあたりにお札が挟み込まれているイメージ。",
+    "bodyPart": "右脇腹（下部、上寄り）",
+    "mnemonicImage": "右の脇腹の下のほう、少し上寄りのあたりにお札が挟み込まれているイメージ。",
     "portrait": "image/portraits/yukichi.webp"
   },
   {
