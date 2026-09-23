@@ -125,8 +125,8 @@
   .ring{fill:none;stroke:var(--instrument);stroke-width:1;opacity:.55;}
   .ring-fill{fill:#fff;}
   .body-silhouette{opacity:1;}
-  .body-silhouette circle{fill:var(--void);}
-  .body-silhouette line{stroke:var(--void);stroke-width:34;stroke-linecap:round;}
+  .body-silhouette circle{fill:var(--instrument-dim);}
+  .body-silhouette line{stroke:var(--instrument-dim);stroke-width:34;stroke-linecap:round;}
   .tick{stroke:var(--instrument-dim);stroke-width:1;}
   .century-tick{stroke:var(--instrument);stroke-width:1.5;opacity:.6;}
   .century-spoke{stroke:var(--instrument-dim);stroke-width:1;opacity:.3;}
@@ -1123,19 +1123,30 @@ function buildBodySilhouette(){
   // sits behind this circle" — it must never label or imply which exact point maps
   // to which exact joint; that mapping stays entirely up to the user's imagination.
   // The two arm tips are the one deliberate exception: they're pinned to the ring's
-  // 1600 (screen-right) and 1900 (screen-left) positions, as if the figure faces the
-  // viewer with arms spread along the circle (anatomical left hand → screen-right → 1600,
-  // anatomical right hand → screen-left → 1900).
+  // 1600 (screen-right) and 1900 (screen-left) angular positions, as if the figure
+  // faces the viewer with arms spread along the circle (anatomical left hand →
+  // screen-right → 1600, anatomical right hand → screen-left → 1900) — but, like the
+  // leg tips, stopped at LIMB_REACH rather than the ring line itself (2026-09-24:
+  // pictogram-style silhouette, limbs kept clear of the ring's edge).
   const g = el('g', {class:'body-silhouette'});
-  const shoulderY = 185;
-  const leftSideHand = pointOnRing(angleForYear(1900), R);
-  const rightSideHand = pointOnRing(angleForYear(1600), R);
-  g.appendChild(el('circle', {cx:280, cy:145, r:30}));                                                    // head
-  g.appendChild(el('line', {x1:280, y1:172, x2:280, y2:300}));                                             // torso
-  g.appendChild(el('line', {x1:280, y1:shoulderY, x2:leftSideHand.x, y2:leftSideHand.y}));                 // left arm → 1900
-  g.appendChild(el('line', {x1:280, y1:shoulderY, x2:rightSideHand.x, y2:rightSideHand.y}));               // right arm → 1600
-  g.appendChild(el('line', {x1:280, y1:300, x2:165, y2:455}));                                             // left leg
-  g.appendChild(el('line', {x1:280, y1:300, x2:395, y2:455}));                                             // right leg
+  const HEAD_R = 30, HEAD_CY = 145, NECK_GAP = 8, TORSO_LEN = 65;
+  const torsoTop = HEAD_CY + HEAD_R + NECK_GAP;
+  const torsoBottom = torsoTop + TORSO_LEN;
+  const shoulderY = torsoTop + 8;
+  const LIMB_REACH = R - 28; // hand/foot tips stay well inside the ring's edge
+
+  const leftSideHand = pointOnRing(angleForYear(1900), LIMB_REACH);
+  const rightSideHand = pointOnRing(angleForYear(1600), LIMB_REACH);
+  // Leg tips: same splay angle as before, scaled in from the ring line to LIMB_REACH.
+  const legScale = LIMB_REACH / Math.hypot(115, 175);
+  const legDX = 115 * legScale, legDY = 175 * legScale;
+
+  g.appendChild(el('circle', {cx:CX, cy:HEAD_CY, r:HEAD_R}));                                                    // head
+  g.appendChild(el('line', {x1:CX, y1:torsoTop, x2:CX, y2:torsoBottom}));                                        // torso
+  g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:leftSideHand.x, y2:leftSideHand.y}));                        // left arm → 1900
+  g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:rightSideHand.x, y2:rightSideHand.y}));                      // right arm → 1600
+  g.appendChild(el('line', {x1:CX, y1:torsoBottom, x2:CX - legDX, y2:CY + legDY}));                              // left leg
+  g.appendChild(el('line', {x1:CX, y1:torsoBottom, x2:CX + legDX, y2:CY + legDY}));                              // right leg
   return g;
 }
 
