@@ -123,9 +123,10 @@
     overflow:visible;
   }
   .ring{fill:none;stroke:var(--instrument);stroke-width:1;opacity:.55;}
-  .body-silhouette{opacity:.16;}
-  .body-silhouette circle{fill:var(--instrument-dim);}
-  .body-silhouette line{stroke:var(--instrument-dim);stroke-width:34;stroke-linecap:round;}
+  .ring-fill{fill:#fff;}
+  .body-silhouette{opacity:1;}
+  .body-silhouette circle{fill:var(--void);}
+  .body-silhouette line{stroke:var(--void);stroke-width:34;stroke-linecap:round;}
   .tick{stroke:var(--instrument-dim);stroke-width:1;}
   .century-tick{stroke:var(--instrument);stroke-width:1.5;opacity:.6;}
   .century-spoke{stroke:var(--instrument-dim);stroke-width:1;opacity:.3;}
@@ -168,13 +169,15 @@
     position:absolute;left:50%;top:50%;
     transform:translate(-50%,-50%);
     text-align:center;pointer-events:none;
-    padding:0 30px;
+    padding:10px 30px;
+    background:rgba(255,255,255,.85);
+    border-radius:14px;
   }
   .center-label .hint{
-    font-size:12px;color:var(--muted-warm);letter-spacing:.04em;
+    font-size:12px;color:var(--ink);letter-spacing:.04em;opacity:.6;
   }
   .center-label .empty-msg{
-    font-size:14px;color:var(--muted);letter-spacing:.06em;margin-bottom:6px;
+    font-size:14px;color:var(--ink);letter-spacing:.06em;margin-bottom:6px;opacity:.6;
   }
 
   .fab-wrap{
@@ -1149,6 +1152,7 @@ async function renderRing(){
     `Lv.${playerLevel}・${levelInfo.title}（${ringEventsCache.length}/${levelInfo.cap}）`;
 
   svg.innerHTML = '';
+  svg.appendChild(el('circle', {cx:CX, cy:CY, r:R, class:'ring-fill'}));
   svg.appendChild(buildBodySilhouette());
   svg.appendChild(el('circle', {cx:CX, cy:CY, r:R, class:'ring'}));
   for (let year = 1500; year < 2000; year += 100){
