@@ -1128,7 +1128,11 @@ function buildBodySilhouette(){
   // Proportions modeled loosely after simplified pictogram figures (restroom/DOT
   // signage style): head ≈ 1 unit, torso ≈ 1.2 head-diameters, legs the longest
   // segment.
-  const HEAD_R = 26, NECK_GAP = 6, TORSO_LEN = 62, ARM_LEN = 140;
+  // NECK_GAP is measured from the torso line's actual coordinate, but the line's
+  // round cap (stroke-linecap:round) visually bulges another half-stroke-width
+  // (17px) past that point — so the gap has to clear that bulge too, or the head
+  // circle looks fused onto the torso instead of floating above it.
+  const HEAD_R = 26, NECK_GAP = 30, TORSO_LEN = 62, ARM_LEN = 140;
   const navelY = CY; // おへそ（胴体の下端）を円環の中心に合わせる
   const torsoTop = navelY - TORSO_LEN;
   const headCY = torsoTop - NECK_GAP - HEAD_R;
