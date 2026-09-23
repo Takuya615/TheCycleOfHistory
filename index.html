@@ -253,10 +253,10 @@
 
   .duel-stage{
     flex:1 1 auto;min-height:0;
-    display:flex;flex-direction:row;align-items:center;
-    gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    display:flex;flex-direction:row;align-items:center;justify-content:center;
+    gap:clamp(8px,3vw,16px);overflow-x:auto;-webkit-overflow-scrolling:touch;
     scroll-snap-type:x proximity;
-    padding:14px 20px calc(env(safe-area-inset-bottom,0px) + 20px);
+    padding:14px clamp(10px,4vw,20px) calc(env(safe-area-inset-bottom,0px) + 20px);
     cursor:grab;
   }
   .duel-stage:active{cursor:grabbing;}
@@ -265,12 +265,15 @@
   }
 
   .duel-card{
-    flex:0 0 auto;width:min(78vw,300px);max-height:100%;
+    /* flex:1 1 0 lets both cards share the row equally, shrinking on narrow
+       phones so neither needs a horizontal scroll to be seen; max-width caps
+       how wide a single (odd-round) card can grow on larger screens. */
+    flex:1 1 0;min-width:0;max-width:300px;max-height:100%;
     scroll-snap-align:center;
     background:linear-gradient(180deg, var(--skin) 0%, var(--skin-2) 100%);
     color:var(--ink);border-radius:20px;
     box-shadow:0 16px 40px rgba(0,0,0,.4);
-    padding:20px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:clamp(12px,4vw,20px);overflow-y:auto;-webkit-overflow-scrolling:touch;
     cursor:pointer;user-select:none;
     border:3px solid transparent;
     transition:border-color .2s ease, transform .15s ease, box-shadow .2s ease;
@@ -296,9 +299,9 @@
     object-fit:cover;margin:0 auto 12px;
     border:1px solid rgba(36,27,20,.15);
   }
-  .card-portrait-lg{width:128px;height:128px;margin:0 auto 18px;}
-  .card-bodypart{font-size:18px;font-weight:700;line-height:1.5;color:var(--ink);}
-  .card-icon-nickname{font-size:21px;font-weight:700;line-height:1.5;color:var(--ink);margin-top:4px;}
+  .card-portrait-lg{width:clamp(64px,26vw,128px);height:clamp(64px,26vw,128px);margin:0 auto 14px;}
+  .card-bodypart{font-size:clamp(15px,4.6vw,18px);font-weight:700;line-height:1.5;color:var(--ink);}
+  .card-icon-nickname{font-size:clamp(17px,5.2vw,21px);font-weight:700;line-height:1.5;color:var(--ink);margin-top:4px;}
 
   /* ---------- scrim + sheet (event detail) ---------- */
   .scrim{
