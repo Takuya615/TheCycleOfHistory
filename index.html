@@ -1121,12 +1121,9 @@ function buildBodySilhouette(){
   // A deliberately generic, unlabeled ピクトグラム, inscribed loosely within the
   // ring. It's meant only as ambient texture suggesting "a body sits behind this
   // circle" — it must never label or imply which exact point maps to which exact
-  // joint; that mapping stays entirely up to the user's imagination. The one
-  // deliberate exception: both arms point along the ring's 1600 (screen-right) and
-  // 1900 (screen-left) angular directions, as if the figure faces the viewer with
-  // arms raised toward those angles (anatomical left hand → screen-right → 1600,
-  // anatomical right hand → screen-left → 1900) — a single straight segment at a
-  // natural arm length, not stretched to actually reach the ring line.
+  // joint; that mapping stays entirely up to the user's imagination. Arms are
+  // simple straight horizontal segments (a plain 大の字 sideways reach) rather than
+  // pointing toward any specific ring position.
   const g = el('g', {class:'body-silhouette'});
   // Proportions modeled loosely after simplified pictogram figures (restroom/DOT
   // signage style): head ≈ 1 unit, torso ≈ 1.2 head-diameters, legs the longest
@@ -1138,20 +1135,16 @@ function buildBodySilhouette(){
   const shoulderY = torsoTop; // 腕は肩（胴体の最上部）から出す
   const LIMB_REACH = R - 20; // leg tips stay clear of the ring's edge
 
-  function armTip(deg, length){
-    const rad = (deg - 90) * Math.PI / 180;
-    return { x: CX + length * Math.cos(rad), y: shoulderY + length * Math.sin(rad) };
-  }
-  const leftHand = armTip(angleForYear(1900), ARM_LEN);
-  const rightHand = armTip(angleForYear(1600), ARM_LEN);
+  const leftHand = { x: CX - ARM_LEN, y: shoulderY };
+  const rightHand = { x: CX + ARM_LEN, y: shoulderY };
   // Leg tips: same splay angle as before, scaled in from the ring line to LIMB_REACH.
   const legScale = LIMB_REACH / Math.hypot(115, 175);
   const legDX = 115 * legScale, legDY = 175 * legScale;
 
   g.appendChild(el('circle', {cx:CX, cy:headCY, r:HEAD_R}));                                                     // head
   g.appendChild(el('line', {x1:CX, y1:torsoTop, x2:CX, y2:navelY}));                                             // torso
-  g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:leftHand.x, y2:leftHand.y}));                                // left arm, toward 1900
-  g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:rightHand.x, y2:rightHand.y}));                              // right arm, toward 1600
+  g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:leftHand.x, y2:leftHand.y}));                                // left arm, straight out
+  g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:rightHand.x, y2:rightHand.y}));                              // right arm, straight out
   g.appendChild(el('line', {x1:CX, y1:navelY, x2:CX - legDX, y2:CY + legDY}));                                   // left leg
   g.appendChild(el('line', {x1:CX, y1:navelY, x2:CX + legDX, y2:CY + legDY}));                                   // right leg
   return g;
