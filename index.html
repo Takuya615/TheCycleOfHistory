@@ -468,6 +468,7 @@
     opacity:0;transition:opacity .3s ease;
   }
   .coach-overlay.show{opacity:1;}
+  .coach-overlay.tap-anywhere.show{pointer-events:auto;}
   .coach-ring{
     position:absolute;pointer-events:none;
     border:2px solid var(--ember);
@@ -1031,6 +1032,8 @@ function markCoachSeen(id){
 
 let coachActiveTarget = null;
 let coachActivePlacement = 'top';
+let coachTapAnywhere = false;
+let coachQueue = [];
 
 function positionCoachmark(){
   if (!coachActiveTarget || !document.body.contains(coachActiveTarget)) return;
@@ -1060,36 +1063,71 @@ window.addEventListener('resize', () => {
   if (document.getElementById('coachOverlay').classList.contains('show')) positionCoachmark();
 });
 
-function showCoachmark(target, text, placement){
-  if (!target) return;
-  coachActiveTarget = target;
-  coachActivePlacement = placement || 'top';
-  document.getElementById('coachText').textContent = text;
-  document.getElementById('coachOverlay').classList.add('show');
+// 複数ステップを順番に見せたいときは startCoachSequence([...])、
+// 単発なら steps を1つだけ渡す。tapAnywhere を立てたステップは、
+// ハイライト部分を含む画面のどこをタップしても次へ進む（＝実際の
+// ボタン操作を素通りさせない）。
+function showNextCoachmark(){
+  const overlay = document.getElementById('coachOverlay');
+  if (!coachQueue.length){
+    overlay.classList.remove('show', 'tap-anywhere');
+    coachActiveTarget = null;
+    return;
+  }
+  const step = coachQueue.shift();
+  if (!step.target || !document.body.contains(step.target)){
+    showNextCoachmark();
+    return;
+  }
+  coachActiveTarget = step.target;
+  coachActivePlacement = step.placement || 'top';
+  coachTapAnywhere = !!step.tapAnywhere;
+  document.getElementById('coachText').textContent = step.text;
+  overlay.classList.toggle('tap-anywhere', coachTapAnywhere);
+  overlay.classList.add('show');
   positionCoachmark();
 }
+function startCoachSequence(steps){
+  coachQueue = steps.filter(s => s.target);
+  showNextCoachmark();
+}
+function advanceCoachmark(){
+  showNextCoachmark();
+}
 function hideCoachmark(){
-  document.getElementById('coachOverlay').classList.remove('show');
+  coachQueue = [];
+  document.getElementById('coachOverlay').classList.remove('show', 'tap-anywhere');
   coachActiveTarget = null;
 }
-document.getElementById('coachDismissBtn').addEventListener('click', hideCoachmark);
+document.getElementById('coachDismissBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  advanceCoachmark();
+});
+document.getElementById('coachOverlay').addEventListener('click', () => {
+  if (coachTapAnywhere) advanceCoachmark();
+});
 
 function maybeShowFabCoachmark(){
   if (hasSeenCoach('fab') || ringEventsCache.length > 0) return;
   markCoachSeen('fab');
-  showCoachmark(document.getElementById('fabBtn'), 'ここから、最初の出来事を選びましょう', 'top');
+  startCoachSequence([
+    { target: document.getElementById('fabBtn'), text: 'ここから、最初の出来事を選びましょう', placement: 'top' }
+  ]);
 }
 function maybeShowPickupCoachmark(){
   if (hasSeenCoach('pickup')) return;
   markCoachSeen('pickup');
-  showCoachmark(document.getElementById('pickupStage'), '気になる方をタップして選んでください。ここで選んだ感覚が、あとで身体に刻まれます。', 'bottom');
+  startCoachSequence([
+    { target: document.getElementById('pickupStage'), text: '気になる方をタップして選んでください。ここで選んだ感覚が、あとで身体に刻まれます。', placement: 'bottom' }
+  ]);
 }
-function maybeShowNodeCoachmark(ids){
-  if (hasSeenCoach('node') || !ids.length) return;
-  const node = svg.querySelector(`.node-hit[data-id="${ids[0]}"]`);
-  if (!node) return;
-  markCoachSeen('node');
-  showCoachmark(node, 'タップして、その感覚を確かめてみてください', 'top');
+function maybeShowRingSetCoachmark(ids){
+  if (hasSeenCoach('ringSet') || !ids.length) return;
+  markCoachSeen('ringSet');
+  startCoachSequence([
+    { target: document.getElementById('dial'), text: '選んだ出来事が、円環にセットされました。', placement: 'bottom' },
+    { target: document.getElementById('fabBtn'), text: '覚えたら、クイズに挑戦しましょう。', placement: 'top', tapAnywhere: true }
+  ]);
 }
 
 /* ==================================================================
@@ -1419,7 +1457,7 @@ async function finishCenturyPickup(){
   showScreen('screen-ring');
   await renderRing();
   highlightNewEvents(newIds);
-  maybeShowNodeCoachmark(newIds);
+  maybeShowRingSetCoachmark(newIds);
 }
 
 function highlightNewEvents(ids){
