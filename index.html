@@ -260,9 +260,6 @@
     cursor:grab;
   }
   .duel-stage:active{cursor:grabbing;}
-  .duel-or{
-    flex:0 0 auto;font-size:13px;letter-spacing:.2em;color:var(--muted);
-  }
 
   .duel-card{
     /* flex:1 1 0 lets both cards share the row equally, shrinking on narrow
@@ -1373,18 +1370,12 @@ function renderPickupRound(){
 
   const stage = document.getElementById('pickupStage');
   stage.innerHTML = '';
-  options.forEach((ev, i) => {
+  options.forEach((ev) => {
     const card = document.createElement('div');
     card.className = 'duel-card duel-card-enter';
     card.innerHTML = renderPickupCard(ev);
     card.addEventListener('click', () => choosePickupOption(ev));
     stage.appendChild(card);
-    if (i === 0 && options.length > 1){
-      const or = document.createElement('div');
-      or.className = 'duel-or tech';
-      or.textContent = 'または';
-      stage.appendChild(or);
-    }
   });
 }
 
