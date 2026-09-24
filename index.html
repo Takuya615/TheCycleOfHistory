@@ -1770,7 +1770,7 @@ function openDetailSheet(ev){
   const portraitEl = document.getElementById('detailPortrait');
   if (isGreatman){
     document.getElementById('detailPersonIcon').textContent = ev.icon || '';
-    document.getElementById('detailPersonName').textContent = ev.title;
+    document.getElementById('detailPersonName').textContent = ev.fullName || ev.title;
     document.getElementById('detailMnemonic').textContent = ev.mnemonicImage || '';
   } else {
     document.getElementById('detailTeaser').textContent = ev.teaser;
