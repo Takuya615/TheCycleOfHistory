@@ -297,8 +297,9 @@
     border:1px solid rgba(36,27,20,.15);
   }
   .card-portrait-lg{width:clamp(64px,26vw,128px);height:clamp(64px,26vw,128px);margin:0 auto 14px;}
-  .card-bodypart{font-size:clamp(15px,4.6vw,18px);font-weight:700;line-height:1.5;color:var(--ink);}
-  .card-icon-nickname{font-size:clamp(17px,5.2vw,21px);font-weight:700;line-height:1.5;color:var(--ink);margin-top:4px;}
+  .card-name-year{font-size:clamp(17px,5vw,20px);font-weight:600;line-height:1.4;color:var(--ink);}
+  .card-mnemonic-label{font-size:12px;letter-spacing:.14em;color:var(--ember-dim);margin-top:14px;}
+  .card-mnemonic-content{font-size:clamp(16px,4.8vw,19px);font-weight:700;line-height:1.5;color:var(--ink);margin-top:2px;}
 
   /* ---------- scrim + sheet (event detail) ---------- */
   .scrim{
@@ -563,13 +564,26 @@
     color:var(--ink);text-align:center;box-shadow:0 16px 40px rgba(0,0,0,.4);
     overflow:visible;transition:box-shadow .4s ease;
   }
+  .quiz-result-level{
+    font-size:24px;font-weight:700;letter-spacing:.04em;color:var(--ember-dim);
+    margin-bottom:10px;
+    opacity:0;transform:translateY(6px);transition:opacity .5s ease, transform .5s ease;
+  }
+  .quiz-result-card.fail .quiz-result-level{color:var(--muted);}
   .quiz-result-score{font-size:38px;font-weight:600;letter-spacing:.04em;}
   .quiz-result-title{
     margin-top:14px;font-size:17px;letter-spacing:.04em;color:var(--ember-dim);
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
     opacity:0;transform:translateY(6px);transition:opacity .5s ease, transform .5s ease;
   }
-  .quiz-result-card.revealed .quiz-result-title{opacity:1;transform:none;}
+  .quiz-result-unlock{
+    margin-top:18px;font-size:14px;line-height:1.7;color:var(--ember-dim);
+    font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
+    opacity:0;transform:translateY(6px);transition:opacity .5s ease, transform .5s ease;
+  }
+  .quiz-result-card.revealed .quiz-result-level,
+  .quiz-result-card.revealed .quiz-result-title,
+  .quiz-result-card.revealed .quiz-result-unlock{opacity:1;transform:none;}
   .quiz-result-card.pass{box-shadow:0 16px 46px rgba(224,136,80,.4);}
   .quiz-result-particle{
     position:absolute;top:50%;left:50%;width:6px;height:6px;border-radius:50%;
@@ -657,8 +671,10 @@
   <div class="screen" id="screen-quiz-result">
     <div class="quiz-result-wrap">
       <div class="quiz-result-card" id="quizResultCard">
+        <div class="quiz-result-level tech" id="quizResultLevel"></div>
         <div class="quiz-result-score" id="quizResultScore">0 / 5</div>
         <div class="quiz-result-title tech" id="quizResultTitle"></div>
+        <div class="quiz-result-unlock tech" id="quizResultUnlock"></div>
       </div>
       <button class="fab tech" id="quizResultContinueBtn" style="display:none;">つづける</button>
     </div>
@@ -1350,16 +1366,19 @@ let duelPickup = { pool: [], sessionPicks: [], round: 0, totalRounds: 0 };
 // iconReasonは「羅針盤 🧭：世界一周という航海の軌跡が...」のように、アイコンの
 // 日本語名＋絵文字＋説明という形式で書かれている。先頭の日本語名だけを取り出し、
 // 「<アイテム名>の<人物名>」というピックアップカード用の愛称を組み立てる。
-function pickupCardNickname(ev){
+// iconReasonは「羅針盤 🧭：世界一周という航海の軌跡が...」のように、アイコンの
+// 日本語名＋絵文字＋説明という形式で書かれている。先頭の日本語名だけを取り出す。
+function iconItemLabel(ev){
   const label = (ev.iconReason || '').split('：')[0].replace(ev.icon || '', '').trim();
-  return label ? `${label}の${ev.title}` : ev.title;
+  return label || ev.title;
 }
 
 function renderPickupCard(ev){
   return (ev.before !== undefined) ? `
     ${ev.portrait ? `<img class="card-portrait card-portrait-lg" src="${ev.portrait}" alt="${ev.title}">` : ''}
-    <div class="card-bodypart">${ev.bodyPart}（${ev.year}年）に、</div>
-    <div class="card-icon-nickname">${ev.icon || ''} ${pickupCardNickname(ev)}</div>
+    <div class="card-name-year">${ev.title}（${ev.year}年）</div>
+    <div class="card-mnemonic-label tech">覚え方</div>
+    <div class="card-mnemonic-content">${ev.icon || ''} ${iconItemLabel(ev)}・${ev.bodyPart}</div>
   ` : `
     <div class="card-year tech">${ev.year}年 &middot; ${ev.place}</div>
     <div class="card-title">${ev.title}</div>
@@ -1671,19 +1690,27 @@ function spawnResultParticles(container){
 
 function animateQuizResult(score, total){
   const passed = score >= quizPatterns.config.passThreshold;
+  const levelEl = document.getElementById('quizResultLevel');
   const scoreEl = document.getElementById('quizResultScore');
   const titleEl = document.getElementById('quizResultTitle');
+  const unlockEl = document.getElementById('quizResultUnlock');
   const cardEl = document.getElementById('quizResultCard');
   const continueBtn = document.getElementById('quizResultContinueBtn');
 
   cardEl.classList.remove('pass', 'fail', 'revealed');
+  levelEl.textContent = '';
   titleEl.textContent = '';
+  unlockEl.textContent = '';
   continueBtn.style.display = 'none';
   scoreEl.textContent = `0 / ${total}`;
+
+  const oldLevel = playerLevel;
+  const oldCap = getLevelInfo(oldLevel).cap;
 
   if (passed) playerLevel = Math.min(playerLevel + 1, LEVEL_TABLE.length);
   savePlayerLevel();
   const info = getLevelInfo(playerLevel);
+  const unlockCount = info.cap - oldCap;
 
   let current = 0;
   const timer = setInterval(() => {
@@ -1693,9 +1720,13 @@ function animateQuizResult(score, total){
       clearInterval(timer);
       setTimeout(() => {
         cardEl.classList.add(passed ? 'pass' : 'fail', 'revealed');
+        levelEl.textContent = passed ? `Lv.${oldLevel} クリア！` : `Lv.${oldLevel} クリアならず`;
         titleEl.textContent = passed
           ? `あなたは${info.title}になった`
           : `あなたは${info.title}のままだ`;
+        if (passed && unlockCount > 0){
+          unlockEl.textContent = `記憶できる歴史が、あと${unlockCount}つ解放されました！`;
+        }
         continueBtn.style.display = '';
         if (passed) spawnResultParticles(cardEl);
       }, 200);
@@ -1742,8 +1773,8 @@ function openDetailSheet(ev){
   document.getElementById('detailBody').innerHTML = (ev.counterfactual !== undefined) ? `
     <p><span class="tag">何をした人か</span>${ev.whatTheyDid}</p>
     <p><span class="tag">詳細</span>${ev.factLayer}</p>
-    <p><span class="tag">アイコンの選定理由</span>${ev.iconReason}</p>
-    <p><span class="tag">もし歴史が違ったら</span>${ev.counterfactual}</p>
+    <p><span class="tag">Before</span>${ev.before}</p>
+    <p><span class="tag">After</span>${ev.after}</p>
   ` : `
     <p><span class="tag">事実レイヤー</span>${ev.factLayer}</p>
     <p><span class="tag">具体的なマテリアル</span>${ev.material}</p>
