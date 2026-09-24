@@ -127,6 +127,7 @@
   .body-silhouette{opacity:1;}
   .body-silhouette circle{fill:var(--instrument-dim);}
   .body-silhouette line{stroke:var(--instrument-dim);stroke-width:34;stroke-linecap:round;}
+  .body-silhouette line.body-torso{stroke-width:51;}
   .tick{stroke:var(--instrument-dim);stroke-width:1;}
   .century-tick{stroke:var(--instrument);stroke-width:1.5;opacity:.6;}
   .century-spoke{stroke:var(--instrument-dim);stroke-width:1;opacity:.3;}
@@ -487,8 +488,13 @@
     color:var(--ink);border-radius:16px;
     padding:14px 16px 12px;
     box-shadow:0 14px 36px rgba(0,0,0,.4);
-    pointer-events:auto;
+    /* pointer-events only enabled while the overlay is actually shown (below) —
+       otherwise this absolutely-positioned tip is invisible (opacity:0 on the
+       ancestor) but was still intercepting taps wherever it was last placed,
+       even on later screens, since pointer-events doesn't follow opacity. */
+    pointer-events:none;
   }
+  .coach-overlay.show .coach-tip{pointer-events:auto;}
   .coach-text{font-size:16px;line-height:1.75;margin-bottom:8px;}
   .coach-dismiss{
     appearance:none;border:none;background:none;cursor:pointer;
@@ -576,6 +582,7 @@
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
     opacity:0;transform:translateY(6px);transition:opacity .5s ease, transform .5s ease;
   }
+  .quiz-result-title strong{font-weight:700;}
   .quiz-result-unlock{
     margin-top:18px;font-size:14px;line-height:1.7;color:var(--ember-dim);
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
@@ -1182,9 +1189,11 @@ function buildBodySilhouette(){
   // segment.
   // NECK_GAP is measured from the torso line's actual coordinate, but the line's
   // round cap (stroke-linecap:round) visually bulges another half-stroke-width
-  // (17px) past that point — so the gap has to clear that bulge too, or the head
-  // circle looks fused onto the torso instead of floating above it.
-  const HEAD_R = 26, NECK_GAP = 30, TORSO_LEN = 62, ARM_LEN = 140;
+  // (25.5px, since the torso is drawn 1.5x thicker than the limbs — see
+  // .body-torso below) past that point — so the gap has to clear that bulge
+  // too, or the head circle looks fused onto the torso instead of floating
+  // above it.
+  const HEAD_R = 26, NECK_GAP = 40, TORSO_LEN = 62, ARM_LEN = 140;
   const navelY = CY; // おへそ（胴体の下端）を円環の中心に合わせる
   const torsoTop = navelY - TORSO_LEN;
   const headCY = torsoTop - NECK_GAP - HEAD_R;
@@ -1198,7 +1207,7 @@ function buildBodySilhouette(){
   const legDX = 115 * legScale, legDY = 175 * legScale;
 
   g.appendChild(el('circle', {cx:CX, cy:headCY, r:HEAD_R}));                                                     // head
-  g.appendChild(el('line', {x1:CX, y1:torsoTop, x2:CX, y2:navelY}));                                             // torso
+  g.appendChild(el('line', {x1:CX, y1:torsoTop, x2:CX, y2:navelY, class:'body-torso'}));                         // torso
   g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:leftHand.x, y2:leftHand.y}));                                // left arm, straight out
   g.appendChild(el('line', {x1:CX, y1:shoulderY, x2:rightHand.x, y2:rightHand.y}));                              // right arm, straight out
   g.appendChild(el('line', {x1:CX, y1:navelY, x2:CX - legDX, y2:CY + legDY}));                                   // left leg
@@ -1721,9 +1730,9 @@ function animateQuizResult(score, total){
       setTimeout(() => {
         cardEl.classList.add(passed ? 'pass' : 'fail', 'revealed');
         levelEl.textContent = passed ? `Lv.${oldLevel} クリア！` : `Lv.${oldLevel} クリアならず`;
-        titleEl.textContent = passed
-          ? `あなたは${info.title}になった`
-          : `あなたは${info.title}のままだ`;
+        titleEl.innerHTML = passed
+          ? `あなたは<strong>${info.title}</strong>になった`
+          : `あなたは<strong>${info.title}</strong>のままだ`;
         if (passed && unlockCount > 0){
           unlockEl.textContent = `記憶できる歴史が、あと${unlockCount}つ解放されました！`;
         }
