@@ -1104,7 +1104,9 @@ function showNextCoachmark(){
   coachActiveTarget = step.target;
   coachActivePlacement = step.placement || 'top';
   coachTapAnywhere = !!step.tapAnywhere;
-  document.getElementById('coachText').textContent = step.text;
+  const textEl = document.getElementById('coachText');
+  if (step.html) textEl.innerHTML = step.text;
+  else textEl.textContent = step.text;
   overlay.classList.toggle('tap-anywhere', coachTapAnywhere);
   overlay.classList.add('show');
   positionCoachmark();
@@ -1146,7 +1148,7 @@ function maybeShowFabCoachmark(){
     yearStep(1800, '1800年は右足'),
     yearStep(1900, '1900年は右手'),
     yearStep(1500, 'そして、2000年は頭にもどってきます'),
-    { target: document.getElementById('fabBtn'), text: 'ここから、最初の出来事を選びましょう', placement: 'top' }
+    { target: document.getElementById('fabBtn'), text: 'ここから、覚えたい歴史を選びましょう', placement: 'top' }
   ].filter(Boolean);
 
   startCoachSequence(steps);
@@ -1163,8 +1165,8 @@ function buildIconCoachText(ev){
     ? ev.iconReason.split(ev.icon)[0].trim()
     : (ev.icon || 'これ');
   return ev.bodyPart
-    ? `この偉人ゆかりのものは${itemName}、${ev.year}年の出来事なので${ev.bodyPart}におくイメージ`
-    : `${itemName}は${ev.year}年の出来事`;
+    ? `この偉人ゆかりのものは<b>${itemName}</b>、<b>${ev.year}年</b>の出来事なので<b>${ev.bodyPart}</b>におくイメージ`
+    : `<b>${itemName}</b>は<b>${ev.year}年</b>の出来事`;
 }
 
 function maybeShowRingSetCoachmark(ids){
@@ -1175,7 +1177,7 @@ function maybeShowRingSetCoachmark(ids){
   const iconSteps = newEvents.map(ev => {
     const node = svg.querySelector(`.node-hit[data-id="${ev.id}"]`);
     if (!node) return null;
-    return { target: node, text: buildIconCoachText(ev), placement: 'top', tapAnywhere: true };
+    return { target: node, text: buildIconCoachText(ev), placement: 'top', tapAnywhere: true, html: true };
   }).filter(Boolean);
 
   startCoachSequence([
