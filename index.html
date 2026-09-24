@@ -1145,11 +1145,29 @@ function maybeShowPickupCoachmark(){
     { target: document.getElementById('pickupStage'), text: '気になる方をタップして選んでください。ここで選んだ感覚が、あとで身体に刻まれます。', placement: 'bottom' }
   ]);
 }
+function buildIconCoachText(ev){
+  const itemName = (ev.icon && ev.iconReason && ev.iconReason.includes(ev.icon))
+    ? ev.iconReason.split(ev.icon)[0].trim()
+    : (ev.icon || 'これ');
+  return ev.bodyPart
+    ? `この偉人ゆかりのものは${itemName}、${ev.year}年の出来事なので${ev.bodyPart}におく`
+    : `${itemName}は${ev.year}年の出来事`;
+}
+
 function maybeShowRingSetCoachmark(ids){
   if (hasSeenCoach('ringSet') || !ids.length) return;
   markCoachSeen('ringSet');
+
+  const newEvents = ringEventsCache.filter(ev => ids.includes(ev.id));
+  const iconSteps = newEvents.map(ev => {
+    const node = svg.querySelector(`.node-hit[data-id="${ev.id}"]`);
+    if (!node) return null;
+    return { target: node, text: buildIconCoachText(ev), placement: 'top', tapAnywhere: true };
+  }).filter(Boolean);
+
   startCoachSequence([
     { target: document.getElementById('dial'), text: '選んだ出来事が、円環にセットされました。', placement: 'bottom', tapAnywhere: true },
+    ...iconSteps,
     { target: document.getElementById('fabBtn'), text: '覚えたら、クイズに挑戦しましょう。', placement: 'top', tapAnywhere: true }
   ]);
 }
