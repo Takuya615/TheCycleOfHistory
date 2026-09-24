@@ -1141,7 +1141,7 @@ function maybeShowRingSetCoachmark(ids){
   if (hasSeenCoach('ringSet') || !ids.length) return;
   markCoachSeen('ringSet');
   startCoachSequence([
-    { target: document.getElementById('dial'), text: '選んだ出来事が、円環にセットされました。', placement: 'bottom' },
+    { target: document.getElementById('dial'), text: '選んだ出来事が、円環にセットされました。', placement: 'bottom', tapAnywhere: true },
     { target: document.getElementById('fabBtn'), text: '覚えたら、クイズに挑戦しましょう。', placement: 'top', tapAnywhere: true }
   ]);
 }
