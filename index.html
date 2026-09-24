@@ -174,11 +174,9 @@
     background:rgba(255,255,255,.85);
     border-radius:14px;
   }
+  .center-label.is-empty{background:none;padding:0;}
   .center-label .hint{
     font-size:14px;color:var(--ink);letter-spacing:.04em;opacity:.6;
-  }
-  .center-label .empty-msg{
-    font-size:16px;color:var(--ink);letter-spacing:.06em;margin-bottom:6px;opacity:.6;
   }
 
   .fab-wrap{
@@ -1316,9 +1314,11 @@ async function renderRing(){
   });
 
   if (ringEventsCache.length === 0){
-    centerLabel.innerHTML = `<div class="empty-msg tech">まだ何も記憶していません</div>`;
+    centerLabel.innerHTML = '';
+    centerLabel.classList.add('is-empty');
   } else {
     centerLabel.innerHTML = `<div class="hint">触れて、感じてください</div>`;
+    centerLabel.classList.remove('is-empty');
   }
 
   if (ringEventsCache.length >= levelInfo.cap){
