@@ -583,14 +583,15 @@
     opacity:0;transform:translateY(6px);transition:opacity .5s ease, transform .5s ease;
   }
   .quiz-result-title strong{font-weight:700;}
-  .quiz-result-unlock{
+  .quiz-result-note{
     margin-top:18px;font-size:14px;line-height:1.7;color:var(--ember-dim);
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
     opacity:0;transform:translateY(6px);transition:opacity .5s ease, transform .5s ease;
   }
+  .quiz-result-card.fail .quiz-result-note{color:var(--muted);}
   .quiz-result-card.revealed .quiz-result-level,
   .quiz-result-card.revealed .quiz-result-title,
-  .quiz-result-card.revealed .quiz-result-unlock{opacity:1;transform:none;}
+  .quiz-result-card.revealed .quiz-result-note{opacity:1;transform:none;}
   .quiz-result-card.pass{box-shadow:0 16px 46px rgba(224,136,80,.4);}
   .quiz-result-particle{
     position:absolute;top:50%;left:50%;width:6px;height:6px;border-radius:50%;
@@ -681,7 +682,7 @@
         <div class="quiz-result-level tech" id="quizResultLevel"></div>
         <div class="quiz-result-score" id="quizResultScore">0 / 5</div>
         <div class="quiz-result-title tech" id="quizResultTitle"></div>
-        <div class="quiz-result-unlock tech" id="quizResultUnlock"></div>
+        <div class="quiz-result-note tech" id="quizResultNote"></div>
       </div>
       <button class="fab tech" id="quizResultContinueBtn" style="display:none;">つづける</button>
     </div>
@@ -1702,14 +1703,14 @@ function animateQuizResult(score, total){
   const levelEl = document.getElementById('quizResultLevel');
   const scoreEl = document.getElementById('quizResultScore');
   const titleEl = document.getElementById('quizResultTitle');
-  const unlockEl = document.getElementById('quizResultUnlock');
+  const noteEl = document.getElementById('quizResultNote');
   const cardEl = document.getElementById('quizResultCard');
   const continueBtn = document.getElementById('quizResultContinueBtn');
 
   cardEl.classList.remove('pass', 'fail', 'revealed');
   levelEl.textContent = '';
   titleEl.textContent = '';
-  unlockEl.textContent = '';
+  noteEl.textContent = '';
   continueBtn.style.display = 'none';
   scoreEl.textContent = `0 / ${total}`;
 
@@ -1729,12 +1730,15 @@ function animateQuizResult(score, total){
       clearInterval(timer);
       setTimeout(() => {
         cardEl.classList.add(passed ? 'pass' : 'fail', 'revealed');
-        levelEl.textContent = passed ? `Lv.${oldLevel} クリア！` : `Lv.${oldLevel} クリアならず`;
+        levelEl.textContent = passed ? `Lv.${oldLevel} クリア！` : 'ざんねん！';
         titleEl.innerHTML = passed
           ? `あなたは<strong>${info.title}</strong>になった`
           : `あなたは<strong>${info.title}</strong>のままだ`;
         if (passed && unlockCount > 0){
-          unlockEl.textContent = `記憶できる歴史が、あと${unlockCount}つ解放されました！`;
+          noteEl.textContent = `記憶できる歴史が、あと${unlockCount}つ解放されました！`;
+        } else if (!passed){
+          const need = quizPatterns.config.passThreshold;
+          noteEl.textContent = `${total}問中${need}問以上正解するとクリアだよ。つぎはがんばろう！`;
         }
         continueBtn.style.display = '';
         if (passed) spawnResultParticles(cardEl);
