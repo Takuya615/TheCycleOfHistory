@@ -1134,9 +1134,24 @@ document.getElementById('coachOverlay').addEventListener('click', () => {
 function maybeShowFabCoachmark(){
   if (hasSeenCoach('fab') || ringEventsCache.length > 0) return;
   markCoachSeen('fab');
-  startCoachSequence([
+
+  const yearStep = (year, text) => {
+    const label = svg.querySelector(`.tick-label[data-year="${year}"]`);
+    return label ? { target: label, text, placement: 'top', tapAnywhere: true } : null;
+  };
+
+  const steps = [
+    { target: document.getElementById('dial'), text: '円のフチが体の部位に対応します。', placement: 'bottom', tapAnywhere: true },
+    yearStep(1500, '1500年は頭'),
+    yearStep(1600, '1600年は左手'),
+    yearStep(1700, '1700年は左足'),
+    yearStep(1800, '1800年は右足'),
+    yearStep(1900, '1900年は右手'),
+    yearStep(1500, 'そして、2000年は頭にもどってきます'),
     { target: document.getElementById('fabBtn'), text: 'ここから、最初の出来事を選びましょう', placement: 'top' }
-  ]);
+  ].filter(Boolean);
+
+  startCoachSequence(steps);
 }
 function maybeShowPickupCoachmark(){
   if (hasSeenCoach('pickup')) return;
@@ -1259,7 +1274,7 @@ async function renderRing(){
     const p2 = pointOnRing(deg, R + 14);
     svg.appendChild(el('line', {x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, class:'century-tick'}));
     const lp = pointOnRing(deg, R + 34);
-    const label = el('text', {x:lp.x, y:lp.y, class:'tick-label'});
+    const label = el('text', {x:lp.x, y:lp.y, class:'tick-label', 'data-year':year});
     label.textContent = year;
     svg.appendChild(label);
   }
