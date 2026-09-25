@@ -342,8 +342,10 @@
     display:flex;align-items:center;gap:12px;
     margin:8px 0 8px;
   }
-  .detail-person-icon{font-size:40px;line-height:1;}
   .detail-person-name{font-size:23px;line-height:1.4;color:var(--ink);font-weight:600;}
+  .detail-relic{
+    font-size:16px;line-height:1.6;color:var(--ink);margin:0 0 10px;
+  }
   .detail-mnemonic{
     font-size:16px;line-height:1.7;color:var(--ember-dim);font-style:italic;
     margin:-2px 0 14px;
@@ -534,6 +536,7 @@
   .quiz-stage{
     flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;
     padding:14px 20px;
+    overflow-y:auto; /* ヒントを開いてカードが画面をはみ出す場合は縦スクロールできるようにする（2026-09-25追加） */
   }
   .quiz-card{
     width:min(86vw,340px);
@@ -543,6 +546,24 @@
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next","YuGothic",sans-serif;
   }
   .quiz-prompt{font-size:19px;line-height:1.75;white-space:pre-line;}
+  .quiz-hint-btn{
+    appearance:none;border:none;background:none;color:var(--ember-dim);
+    font-family:"Hiragino Kaku Gothic ProN","Avenir Next","YuGothic",sans-serif;
+    font-size:14px;letter-spacing:.04em;cursor:pointer;
+    margin-top:16px;padding:6px 4px;display:inline-flex;align-items:center;gap:5px;
+  }
+  .quiz-hint-arrow{display:inline-block;font-size:11px;transition:transform .25s ease;}
+  .quiz-hint-btn.open .quiz-hint-arrow{transform:rotate(180deg);}
+  .quiz-hint-panel{
+    max-height:0;overflow:hidden;
+    transition:max-height .3s ease, opacity .3s ease, margin-top .3s ease;
+    opacity:0;
+  }
+  .quiz-hint-panel.open{max-height:200px;opacity:1;margin-top:10px;}
+  .quiz-hint-text{
+    font-size:15px;line-height:1.7;color:var(--ember-dim);font-style:italic;
+    font-family:"Hiragino Kaku Gothic ProN","Avenir Next","YuGothic",sans-serif;
+  }
   @keyframes quizCardEnter{
     from{opacity:0;transform:translateY(18px) rotate(-3deg) scale(.94);}
     to{opacity:1;transform:none;}
@@ -722,9 +743,9 @@
     <div class="sheet-handle"></div>
     <div class="detail-eyebrow tech" id="detailYear"></div>
     <div class="detail-person" id="detailPerson">
-      <span class="detail-person-icon" id="detailPersonIcon"></span>
       <span class="detail-person-name" id="detailPersonName"></span>
     </div>
+    <div class="detail-relic" id="detailRelic"></div>
     <div class="detail-mnemonic" id="detailMnemonic"></div>
     <img class="detail-portrait" id="detailPortrait" alt="">
     <div class="detail-teaser" id="detailTeaser"></div>
@@ -1729,6 +1750,28 @@ function buildIconOrderQuestion(held){
   return { prompt, choices, correctIndex };
 }
 
+// ヒント文言（2026-09-25追加）：回答に使う4つの情報（偉人名・ゆかりのもの・
+// 体の部位・年号）のうち、その設問の「問い」にも「答え」にも使われていない
+// 残り2つを使って文章を組み立てる（答えそのものを言い当ててしまう情報は
+// 決して含めない）。対象は9-2-2節の4項目に基づく偉人型の設問のみで、前後
+// 関係・並び替え・5問目（出来事の体の部位）にはヒントを用意しない。
+const HINT_BUILDERS = {
+  icon_to_year:          t => `${t.title}の${t.bodyPart}のことだね`,
+  year_to_icon:          t => `${t.title}の${t.bodyPart}のことだね`,
+  person_to_year:        t => `ゆかりのものは${iconItemLabel(t)}。${t.bodyPart}あたりのことだね`,
+  year_to_person:        t => `ゆかりのものは${iconItemLabel(t)}。${t.bodyPart}あたりのことだね`,
+  bodypart_to_icon:      t => `${t.bodyPart}は${t.year}年${t.title}の頃だね`,
+  icon_to_bodypart:      t => `${iconItemLabel(t)}は${t.year}年${t.title}の頃だね`,
+  person_to_bodypart:    t => `ゆかりのものは${iconItemLabel(t)}。${t.year}年のことだね`,
+  bodypart_to_person:    t => `ゆかりのものは${iconItemLabel(t)}。${t.year}年のことだね`,
+  bodypart_to_yearrange: t => `${t.title}のゆかりのものは${iconItemLabel(t)}だね`,
+  yearrange_to_bodypart: t => `${t.title}のゆかりのものは${iconItemLabel(t)}だね`,
+};
+function hintTextFor(patternId, target){
+  const build = HINT_BUILDERS[patternId];
+  return build ? build(target) : null;
+}
+
 function promptTextFor(pattern, target){
   return pattern.questionTemplate
     .replace('{{icon}}', target.icon)
@@ -1756,7 +1799,7 @@ function buildStandardQuestion(held){
   const choices = shuffled.map(e => fieldValue(e, pattern.answerField));
   const correctIndex = shuffled.findIndex(e => e.id === target.id);
 
-  return { prompt: promptTextFor(pattern, target), choices, correctIndex };
+  return { prompt: promptTextFor(pattern, target), choices, correctIndex, hint: hintTextFor(patternId, target) };
 }
 
 function buildEventLocationQuestion(){
@@ -1816,6 +1859,25 @@ function renderQuizQuestion(){
   prompt.className = 'quiz-prompt';
   prompt.textContent = q.prompt;
   card.appendChild(prompt);
+
+  if (q.hint){
+    const hintBtn = document.createElement('button');
+    hintBtn.className = 'quiz-hint-btn tech';
+    hintBtn.innerHTML = 'ヒント <span class="quiz-hint-arrow">▼</span>';
+    const hintPanel = document.createElement('div');
+    hintPanel.className = 'quiz-hint-panel';
+    const hintText = document.createElement('div');
+    hintText.className = 'quiz-hint-text';
+    hintText.textContent = q.hint;
+    hintPanel.appendChild(hintText);
+    hintBtn.addEventListener('click', () => {
+      hintBtn.classList.toggle('open');
+      hintPanel.classList.toggle('open');
+    });
+    card.appendChild(hintBtn);
+    card.appendChild(hintPanel);
+  }
+
   stage.appendChild(card);
 
   const choicesWrap = document.getElementById('quizChoices');
@@ -1924,12 +1986,13 @@ function openDetailSheet(ev){
   const isGreatman = ev.counterfactual !== undefined;
   document.getElementById('detailYear').textContent = ev.year + '年';
   document.getElementById('detailPerson').style.display = isGreatman ? 'flex' : 'none';
+  document.getElementById('detailRelic').style.display = isGreatman ? '' : 'none';
   document.getElementById('detailMnemonic').style.display = isGreatman ? '' : 'none';
   document.getElementById('detailTeaser').style.display = isGreatman ? 'none' : '';
   const portraitEl = document.getElementById('detailPortrait');
   if (isGreatman){
-    document.getElementById('detailPersonIcon').textContent = ev.icon || '';
     document.getElementById('detailPersonName').textContent = ev.fullName || ev.title;
+    document.getElementById('detailRelic').textContent = `ゆかりのもの：${ev.icon || ''} ${iconItemLabel(ev)}`;
     document.getElementById('detailMnemonic').textContent = ev.mnemonicImage || '';
   } else {
     document.getElementById('detailTeaser').textContent = ev.teaser;
