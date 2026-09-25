@@ -1,10 +1,11 @@
 {
-  "version": 1,
+  "version": 2,
   "config": {
     "questionsPerQuiz": 5,
     "passThreshold": 3,
-    "orderRelationStep": 5,
-    "orderRelationMinYearDiff": 5,
+    "eventLocationStep": 5,
+    "eventLocationMinYearDiff": 5,
+    "bodyPartMinSeparationYears": 20,
     "choiceCountRules": [
       { "minHeldCount": 3, "maxHeldCount": 3, "choiceCount": 3 },
       { "minHeldCount": 4, "maxHeldCount": 5, "choiceCount": 4 },
@@ -15,70 +16,108 @@
     {
       "id": "icon_to_year",
       "label": "アイコン→年",
-      "questionType": "multiple_choice",
       "steps": [1, 2, 3, 4],
       "questionTemplate": "この{{icon}}は、いつの出来事？",
-      "promptField": "icon",
       "answerField": "year",
-      "choicePool": {
-        "source": "held_events",
-        "field": "year",
-        "excludeTargetEvent": true
-      }
+      "choicePool": "held_events.year"
     },
     {
       "id": "person_to_year",
       "label": "人物→活躍年",
-      "questionType": "multiple_choice",
       "steps": [1, 2, 3, 4],
       "questionTemplate": "{{title}}は何年に活躍した人でしょう？",
-      "promptField": "title",
       "answerField": "year",
-      "choicePool": {
-        "source": "held_events",
-        "field": "year",
-        "excludeTargetEvent": true
-      }
+      "choicePool": "held_events.year"
     },
     {
-      "id": "year_to_event",
-      "label": "年→出来事",
-      "questionType": "multiple_choice",
+      "id": "year_to_person",
+      "label": "年→人物（2026-09-25改訂：出来事ではなく人物を問う文言に修正）",
       "steps": [1, 2, 3, 4],
-      "questionTemplate": "{{year}}年の歴史的出来事は？",
-      "promptField": "year",
+      "questionTemplate": "{{year}}年に活躍した偉人は？",
       "answerField": "title",
-      "choicePool": {
-        "source": "held_events",
-        "field": "title",
-        "excludeTargetEvent": true
-      }
+      "choicePool": "held_events.title"
     },
     {
-      "id": "order_relation",
-      "label": "前後関係",
+      "id": "year_to_icon",
+      "label": "年→アイコン（2026-09-25追加）",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{year}}年の偉人のゆかりのものはどれ？",
+      "answerField": "iconLabel",
+      "choicePool": "held_events.iconLabel"
+    },
+    {
+      "id": "bodypart_to_icon",
+      "label": "体の部位→アイコン（2026-09-25追加）",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{bodyPart}}あたりにあるものは？",
+      "answerField": "iconLabel",
+      "choicePool": "held_events.iconLabel",
+      "requiresBodyPartSeparation": true
+    },
+    {
+      "id": "icon_to_bodypart",
+      "label": "アイコン→体の部位（2026-09-25追加）",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{iconLabel}}はどこ？",
+      "answerField": "bodyPart",
+      "choicePool": "held_events.bodyPart",
+      "requiresBodyPartSeparation": true
+    },
+    {
+      "id": "person_to_bodypart",
+      "label": "人物→体の部位（2026-09-25追加）",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{title}}が活躍したのはどこ？",
+      "answerField": "bodyPart",
+      "choicePool": "held_events.bodyPart",
+      "requiresBodyPartSeparation": true
+    },
+    {
+      "id": "bodypart_to_person",
+      "label": "体の部位→人物（2026-09-25追加）",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{bodyPart}}あたりで活躍したのは誰？",
+      "answerField": "title",
+      "choicePool": "held_events.title"
+    },
+    {
+      "id": "bodypart_to_yearrange",
+      "label": "体の部位→年代（2026-09-25追加）",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{bodyPart}}あたりは何年？",
+      "answerField": "yearRange",
+      "choicePool": "held_events.yearRange",
+      "requiresBodyPartSeparation": true
+    },
+    {
+      "id": "yearrange_to_bodypart",
+      "label": "年代→体の部位（2026-09-25追加）",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{yearRange}}はどこ？",
+      "answerField": "bodyPart",
+      "choicePool": "held_events.bodyPart",
+      "requiresBodyPartSeparation": true
+    },
+    {
+      "id": "icon_order",
+      "label": "アイコンの並び替え（2026-09-25追加）",
+      "steps": [1, 2, 3, 4],
+      "questionTemplate": "{{iconList}}の人物が活躍した年の順番は？",
+      "note": "保有出来事から無作為に3件選び、その3人の活躍年の正しい順序を、3通りの並び順の選択肢（正解1つ＋誤答2つ）から選ばせる。誤答は残り4通りの並び順からランダムに2つ選ぶ",
+      "answerField": "iconOrder",
+      "choicePool": "held_events.iconOrderPermutations"
+    },
+    {
+      "id": "event_location",
+      "label": "前後関係の代わりに、出来事の体の部位を問う（2026-09-25全面改訂：旧◯×形式を廃止）",
       "steps": [5],
       "staticEventSource": "data/quiz/order_events.json",
-      "personActionSource": "data/quiz/person_actions.json",
+      "bodyPointsSource": "data/quiz/body_points.json",
       "minYearDiff": 5,
-      "variants": [
-        {
-          "questionType": "true_false",
-          "questionTemplate": "西暦：{{staticYear}}年\n事件：{{staticHeadline}}\n\nこの事件が起きたのは、\n{{personTitle}}による{{personAction}}より{{relation}}のこと",
-          "answerField": "computed_boolean"
-        },
-        {
-          "questionType": "multiple_choice",
-          "questionTemplate": "西暦：{{staticYear}}年\n事件：{{staticHeadline}}\n\nこの事件より{{relation}}の出来事はどれ？",
-          "answerField": "title",
-          "choicePool": {
-            "source": "held_events",
-            "field": "title",
-            "excludeTargetEvent": false
-          }
-        }
-      ],
-      "relationValues": ["前", "後"]
+      "questionTemplate": "西暦：{{staticYear}}年\n事件：{{staticHeadline}}\n\nこの事件が起きたのはどこ？",
+      "answerField": "label",
+      "choicePool": "body_points.label",
+      "requiresBodyPartSeparation": true
     }
   ]
 }

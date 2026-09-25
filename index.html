@@ -1547,19 +1547,18 @@ function highlightNewEvents(ids){
    ================================================================== */
 let quizPatterns = null;
 let orderEvents = null;
-let personActions = null; // id -> 短い名詞句（例:「電球の発明」）。前後関係問題の文言用
+let bodyPoints = null; // 4-5節の身体部位マッピング（50箇所、10年刻み）
 
 async function loadQuizData(){
-  if (quizPatterns && orderEvents && personActions) return;
-  const [patternsRes, orderRes, actionsRes] = await Promise.all([
+  if (quizPatterns && orderEvents && bodyPoints) return;
+  const [patternsRes, orderRes, bodyPointsRes] = await Promise.all([
     fetch('data/quiz/patterns.json'),
     fetch('data/quiz/order_events.json'),
-    fetch('data/quiz/person_actions.json')
+    fetch('data/quiz/body_points.json')
   ]);
   quizPatterns = await patternsRes.json();
   orderEvents = await orderRes.json();
-  const actionList = await actionsRes.json();
-  personActions = new Map(actionList.map(a => [a.id, a.action]));
+  bodyPoints = await bodyPointsRes.json();
 }
 
 function choiceCountFor(heldCount){
@@ -1576,79 +1575,134 @@ function pickRandom(arr){
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+// 10年刻みの身体部位マッピング（4-5節）上で、西暦に最も近いポイントの年を返す。
+// 1995〜1999年は2000年（=1500年の頭頂部と同一地点）に丸まるため、1500年に読み替える。
+function checkpointYear(year){
+  let cp = Math.round(year / 10) * 10;
+  if (cp >= 2000) cp = 1500;
+  return cp;
+}
+function yearRangeLabel(year){
+  const cp = checkpointYear(year);
+  return `${cp - 5}〜${cp + 5}年`;
+}
+function iconLabelFor(ev){
+  return `${ev.icon} ${iconItemLabel(ev)}`;
+}
+function fieldValue(item, field){
+  switch (field){
+    case 'year': return `${item.year}年`;
+    case 'title': return item.title;
+    case 'bodyPart': return item.bodyPart;
+    case 'iconLabel': return iconLabelFor(item);
+    case 'yearRange': return yearRangeLabel(item.year);
+    case 'label': return item.label; // body_pointsのラベルそのもの
+    default: return item[field];
+  }
+}
+
+// 体の部位・年代を答えさせる問題は、隣接ポイントと混同しやすいので、候補同士の
+// 西暦が最低でも指定年数（既定20年）以上離れるよう、貪欲法で候補を選ぶ。
+// target は必ず1件目に含む。
+function pickYearSeparated(candidates, target, minSep, count){
+  const chosen = [target];
+  const pool = shuffle(candidates);
+  for (const c of pool){
+    if (chosen.length >= count) break;
+    if (chosen.every(ch => Math.abs(ch.year - c.year) >= minSep)) chosen.push(c);
+  }
+  return chosen;
+}
+
+const STANDARD_PATTERN_IDS = [
+  'icon_to_year', 'person_to_year', 'year_to_person', 'year_to_icon',
+  'bodypart_to_icon', 'icon_to_bodypart', 'person_to_bodypart',
+  'bodypart_to_person', 'bodypart_to_yearrange', 'yearrange_to_bodypart',
+  'icon_order'
+];
+
+// arrの全順列を返す（3件程度の小さな配列専用）
+function permutations(arr){
+  if (arr.length <= 1) return [arr];
+  const result = [];
+  arr.forEach((item, i) => {
+    const rest = arr.slice(0, i).concat(arr.slice(i + 1));
+    permutations(rest).forEach(p => result.push([item, ...p]));
+  });
+  return result;
+}
+
+// 保有出来事から3件選び、活躍年の正しい並び順を3択（正解1＋誤答2）で問う
+function buildIconOrderQuestion(held){
+  const picks = shuffle(held).slice(0, 3);
+  const correctIcons = [...picks].sort((a, b) => a.year - b.year).map(e => e.icon);
+  const correctKey = correctIcons.join('→');
+
+  const allOrders = permutations(picks.map(e => e.icon));
+  const wrongOrders = shuffle(allOrders.filter(o => o.join('→') !== correctKey)).slice(0, 2);
+
+  const optionOrders = shuffle([correctIcons, ...wrongOrders]);
+  const choices = optionOrders.map(o => o.join(' → '));
+  const correctIndex = optionOrders.findIndex(o => o.join('→') === correctKey);
+
+  const prompt = `${picks.map(e => e.icon).join('、')}の人物が活躍した年の順番は？`;
+  return { prompt, choices, correctIndex };
+}
+
+function promptTextFor(pattern, target){
+  return pattern.questionTemplate
+    .replace('{{icon}}', target.icon)
+    .replace('{{title}}', target.title)
+    .replace('{{year}}', target.year)
+    .replace('{{bodyPart}}', target.bodyPart)
+    .replace('{{iconLabel}}', iconLabelFor(target))
+    .replace('{{yearRange}}', yearRangeLabel(target.year));
+}
+
 function buildStandardQuestion(held){
-  const patternId = pickRandom(['icon_to_year', 'person_to_year', 'year_to_event']);
+  const patternId = pickRandom(STANDARD_PATTERN_IDS);
+  if (patternId === 'icon_order') return buildIconOrderQuestion(held);
+
   const pattern = quizPatterns.patterns.find(p => p.id === patternId);
   const target = pickRandom(held);
   const n = choiceCountFor(held.length);
-  const field = pattern.answerField;
+  const others = held.filter(e => e.id !== target.id);
 
-  const distractorPool = shuffle(held.filter(e => e.id !== target.id)).slice(0, n - 1).map(e => e[field]);
-  const values = shuffle([target[field], ...distractorPool]);
-  const correctIndex = values.indexOf(target[field]);
+  const chosen = pattern.requiresBodyPartSeparation
+    ? pickYearSeparated(others, target, quizPatterns.config.bodyPartMinSeparationYears, n)
+    : [target, ...shuffle(others).slice(0, n - 1)];
 
-  let prompt;
-  if (patternId === 'icon_to_year') prompt = pattern.questionTemplate.replace('{{icon}}', target.icon);
-  else if (patternId === 'person_to_year') prompt = pattern.questionTemplate.replace('{{title}}', target.title);
-  else prompt = pattern.questionTemplate.replace('{{year}}', target.year);
+  const shuffled = shuffle(chosen);
+  const choices = shuffled.map(e => fieldValue(e, pattern.answerField));
+  const correctIndex = shuffled.findIndex(e => e.id === target.id);
 
-  const choices = values.map(v => (field === 'year' ? `${v}年` : v));
-  return { type: 'multiple_choice', prompt, choices, correctIndex };
+  return { prompt: promptTextFor(pattern, target), choices, correctIndex };
 }
 
-function buildOrderRelationQuestion(held){
-  const pattern = quizPatterns.patterns.find(p => p.id === 'order_relation');
-  const minDiff = pattern.minYearDiff;
+function buildEventLocationQuestion(){
+  const pattern = quizPatterns.patterns.find(p => p.id === 'event_location');
+  const staticEv = pickRandom(orderEvents);
+  const correctYear = checkpointYear(staticEv.year);
+  const correctPoint = bodyPoints.find(p => p.year === correctYear);
+  const others = bodyPoints.filter(p => p.year !== correctPoint.year);
 
-  const pairs = [];
-  held.forEach(h => {
-    orderEvents.forEach(o => {
-      if (Math.abs(h.year - o.year) >= minDiff) pairs.push({ person: h, staticEv: o });
-    });
-  });
-  if (pairs.length === 0) return buildStandardQuestion(held);
+  const n = 4; // 50箇所の全体から選ぶため、保有件数に関わらず標準の4択
+  const chosen = pickYearSeparated(others, correctPoint, quizPatterns.config.bodyPartMinSeparationYears, n);
+  const shuffled = shuffle(chosen);
+  const choices = shuffled.map(p => fieldValue(p, pattern.answerField));
+  const correctIndex = shuffled.findIndex(p => p.year === correctPoint.year);
 
-  const { person, staticEv } = pickRandom(pairs);
-  const relation = Math.random() < 0.5 ? '前' : '後';
-
-  if (Math.random() < 0.5){
-    const satisfies = e => {
-      const diff = e.year - staticEv.year;
-      if (Math.abs(diff) < minDiff) return null;
-      return relation === '前' ? diff < 0 : diff > 0;
-    };
-    const matches = held.filter(e => satisfies(e) === true);
-    const nonMatches = held.filter(e => satisfies(e) === false);
-    const n = choiceCountFor(held.length);
-    if (matches.length >= 1 && nonMatches.length >= 1){
-      const correct = pickRandom(matches);
-      const distractors = shuffle(nonMatches).slice(0, Math.min(n - 1, nonMatches.length));
-      const choiceEvents = shuffle([correct, ...distractors]);
-      const correctIndex = choiceEvents.findIndex(e => e.id === correct.id);
-      const template = pattern.variants[1].questionTemplate;
-      const prompt = template
-        .replace('{{staticYear}}', staticEv.year)
-        .replace('{{staticHeadline}}', staticEv.headline)
-        .replace('{{relation}}', relation);
-      return { type: 'multiple_choice', prompt, choices: choiceEvents.map(e => e.title), correctIndex };
-    }
-  }
-
-  const actualRelation = staticEv.year < person.year ? '前' : '後';
-  const template = pattern.variants[0].questionTemplate;
-  const prompt = template
+  const prompt = pattern.questionTemplate
     .replace('{{staticYear}}', staticEv.year)
-    .replace('{{staticHeadline}}', staticEv.headline)
-    .replace('{{personTitle}}', person.title)
-    .replace('{{personAction}}', personActions.get(person.id) || person.title)
-    .replace('{{relation}}', relation);
-  return { type: 'true_false', prompt, correctBool: relation === actualRelation };
+    .replace('{{staticHeadline}}', staticEv.headline);
+
+  return { prompt, choices, correctIndex };
 }
 
 function buildQuizQuestions(held){
   const questions = [];
   for (let i = 0; i < 4; i++) questions.push(buildStandardQuestion(held));
-  questions.push(buildOrderRelationQuestion(held));
+  questions.push(buildEventLocationQuestion());
   return questions;
 }
 
@@ -1686,28 +1740,18 @@ function renderQuizQuestion(){
 
   const choicesWrap = document.getElementById('quizChoices');
   choicesWrap.innerHTML = '';
-  if (q.type === 'true_false'){
-    [['◯', true], ['×', false]].forEach(([label, value]) => {
-      const btn = document.createElement('button');
-      btn.className = 'quiz-choice-btn tech';
-      btn.textContent = label;
-      btn.addEventListener('click', () => answerQuiz(value));
-      choicesWrap.appendChild(btn);
-    });
-  } else {
-    q.choices.forEach((choiceText, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'quiz-choice-btn tech';
-      btn.textContent = choiceText;
-      btn.addEventListener('click', () => answerQuiz(i));
-      choicesWrap.appendChild(btn);
-    });
-  }
+  q.choices.forEach((choiceText, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-choice-btn tech';
+    btn.textContent = choiceText;
+    btn.addEventListener('click', () => answerQuiz(i));
+    choicesWrap.appendChild(btn);
+  });
 }
 
 function answerQuiz(answer){
   const q = quizState.questions[quizState.index];
-  const isCorrect = (q.type === 'true_false') ? (answer === q.correctBool) : (answer === q.correctIndex);
+  const isCorrect = answer === q.correctIndex;
   if (isCorrect) quizState.correctCount += 1;
 
   if (quizState.index < quizState.questions.length - 1){
