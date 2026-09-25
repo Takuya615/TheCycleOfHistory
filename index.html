@@ -129,6 +129,11 @@
   .body-silhouette line{stroke:var(--instrument-dim);stroke-width:34;stroke-linecap:round;}
   .body-silhouette line.body-torso{stroke-width:51;}
   .tick{stroke:var(--instrument-dim);stroke-width:1;}
+  .cluster-dot{fill:var(--ember);stroke:var(--void);stroke-width:2;}
+  .cluster-count{
+    fill:var(--void);font-size:18px;font-weight:700;
+    text-anchor:middle;dominant-baseline:central;pointer-events:none;user-select:none;
+  }
   .century-tick{stroke:var(--instrument);stroke-width:1.5;opacity:.6;}
   .century-spoke{stroke:var(--instrument-dim);stroke-width:1;opacity:.3;}
   .tick-label{fill:var(--muted);font-size:19px;text-anchor:middle;dominant-baseline:middle;}
@@ -1209,6 +1214,9 @@ function el(tag, attrs){
 }
 
 let ringEventsCache = [];
+// 重なったノードのクラスターのうち、現在タップで展開しているものの識別キー
+// （メンバーのidをつないだ文字列）。nullなら何も展開していない（2026-09-25追加）。
+let expandedClusterKey = null;
 
 function buildBodySilhouette(){
   // A deliberately generic, unlabeled ピクトグラム, inscribed loosely within the
@@ -1249,6 +1257,43 @@ function buildBodySilhouette(){
   return g;
 }
 
+// 円環上の出来事ノード1件分の描画（単独ノード・クラスター展開後のメンバー、
+// どちらからも呼ばれる共通処理、2026-09-25切り出し）。
+function renderRingNode(ev, p, deg, nodeRadius){
+  const hasIcon = !!ev.icon;
+  const glow = el('circle', {cx:p.x, cy:p.y, r: hasIcon ? 30 : 22, class:'node-glow', 'data-id':ev.id});
+  const hit  = el('circle', {cx:p.x, cy:p.y, r: hasIcon ? 32 : 26, class:'node-hit', 'data-id':ev.id});
+  const dot  = el('circle', {cx:p.x, cy:p.y, r: hasIcon ? 20 : 6, class:'node-dot', 'data-id':ev.id});
+  hit.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openDetailSheet(ev);
+  });
+  svg.appendChild(glow);
+  svg.appendChild(dot);
+  if (hasIcon){
+    const icon = el('text', {x:p.x, y:p.y, class:'node-icon', 'data-id':ev.id, 'text-anchor':'middle', 'dominant-baseline':'central'});
+    icon.textContent = ev.icon;
+    svg.appendChild(icon);
+  }
+  svg.appendChild(hit);
+
+  const yp = pointOnRing(deg, nodeRadius + (hasIcon ? 30 : 14));
+  const yearLabel = el('text', {x:yp.x, y:yp.y, class:'event-year-label'});
+  yearLabel.textContent = ev.year;
+  svg.appendChild(yearLabel);
+}
+
+// クラスター展開中に円環の背景（ノード・クラスターバッジ以外の場所）をタップ
+// したら、展開を閉じてまとめ表示に戻す（2026-09-25追加）。ノード・バッジ側の
+// クリックハンドラーはstopPropagation()しているため、ここには「それ以外の
+// 場所」をタップした場合だけ届く。
+svg.addEventListener('click', () => {
+  if (expandedClusterKey !== null){
+    expandedClusterKey = null;
+    renderRing();
+  }
+});
+
 let fabMode = 'pickup';
 
 async function renderRing(){
@@ -1279,40 +1324,75 @@ async function renderRing(){
     svg.appendChild(label);
   }
 
-  const MIN_GAP_DEG = 9, STEP = 15;
-  let lastDeg = null, offset = 0;
+  // 近接した出来事は「クラスター」としてまとめ、2件以上重なる場合はタップで
+  // 展開する件数バッジとして表示する（2026-09-25追加：旧仕様は常時・小刻みな
+  // 放射オフセットのみでタップ判定同士が重なりやすかったための改善）。
+  // EXPANDED_MAX_EXTRA：展開時、円環の枠線からどこまで外側に広げてよいかの上限
+  // （SVGのviewBox上、円環の外側にはこれくらいしか余白がないため）。
+  // メンバー数で割った間隔で並べることで、何件重なっていても表示が画面の
+  // 外まで飛び出さないようにする（間隔は狭くなるが、極端に多い場合の妥協）。
+  const MIN_GAP_DEG = 9, EXPANDED_MAX_EXTRA = 90;
+  const clusters = [];
+  let lastDeg = null;
   ringEventsCache.forEach((ev) => {
     const deg = angleForYear(ev.year);
-    if (lastDeg !== null && Math.min(Math.abs(deg - lastDeg), 360 - Math.abs(deg - lastDeg)) < MIN_GAP_DEG){
-      offset += STEP;
+    const last = clusters[clusters.length - 1];
+    // 直前の出来事との角度差で連鎖判定する（隣同士が近ければ、3件以上でも
+    // ひとつながりのクラスターにまとめる。クラスターの先頭要素だけと比較すると、
+    // 隣接するのに別クラスターとして扱われ、バッジ同士がほぼ重なって表示される
+    // 不具合になる）。
+    if (last && lastDeg !== null && Math.min(Math.abs(deg - lastDeg), 360 - Math.abs(deg - lastDeg)) < MIN_GAP_DEG){
+      last.members.push(ev);
     } else {
-      offset = 0;
+      clusters.push({ members: [ev] });
     }
     lastDeg = deg;
+  });
+  // クラスターの代表角度は、描画確定後にメンバー全体の平均角度として求める
+  // （表示位置・展開時の扇の起点に使う）。
+  clusters.forEach(c => {
+    c.deg = c.members.reduce((sum, m) => sum + angleForYear(m.year), 0) / c.members.length;
+  });
 
-    const nodeRadius = R + offset;
+  clusters.forEach(({ deg, members }) => {
     const base = pointOnRing(deg, R);
-    const p = offset ? pointOnRing(deg, nodeRadius) : base;
-    if (offset) svg.appendChild(el('line', {x1:base.x, y1:base.y, x2:p.x, y2:p.y, class:'tick'}));
 
-    const hasIcon = !!ev.icon;
-    const glow = el('circle', {cx:p.x, cy:p.y, r: hasIcon ? 30 : 22, class:'node-glow', 'data-id':ev.id});
-    const hit  = el('circle', {cx:p.x, cy:p.y, r: hasIcon ? 32 : 26, class:'node-hit', 'data-id':ev.id});
-    const dot  = el('circle', {cx:p.x, cy:p.y, r: hasIcon ? 20 : 6, class:'node-dot', 'data-id':ev.id});
-    hit.addEventListener('click', () => openDetailSheet(ev));
-    svg.appendChild(glow);
-    svg.appendChild(dot);
-    if (hasIcon){
-      const icon = el('text', {x:p.x, y:p.y, class:'node-icon', 'data-id':ev.id, 'text-anchor':'middle', 'dominant-baseline':'central'});
-      icon.textContent = ev.icon;
-      svg.appendChild(icon);
+    if (members.length === 1){
+      renderRingNode(members[0], base, deg, R);
+      return;
     }
-    svg.appendChild(hit);
 
-    const yp = pointOnRing(deg, nodeRadius + (hasIcon ? 30 : 14));
-    const yearLabel = el('text', {x:yp.x, y:yp.y, class:'event-year-label'});
-    yearLabel.textContent = ev.year;
-    svg.appendChild(yearLabel);
+    const clusterKey = members.map(m => m.id).join('|');
+    if (expandedClusterKey === clusterKey){
+      // 純粋に同じ角度のまま放射方向だけへ並べると、3件以上では間隔が狭くなり
+      // すぎてタップ判定がほぼ重なってしまう（画面外にはみ出さない上限
+      // EXPANDED_MAX_EXTRA の中に収めなければならないため）。そこで放射方向を
+      // 主としつつ、外側のメンバーほど角度も少しだけ振ることで、限られた面積の
+      // 中でも実際に指で区別しやすい間隔を確保する。
+      const step = EXPANDED_MAX_EXTRA / members.length;
+      const ANGLE_JITTER = 7;
+      const mid = (members.length - 1) / 2;
+      members.forEach((ev, i) => {
+        const nodeRadius = R + step * (i + 1);
+        const nodeDeg = deg + ANGLE_JITTER * (i - mid);
+        const p = pointOnRing(nodeDeg, nodeRadius);
+        svg.appendChild(el('line', {x1:base.x, y1:base.y, x2:p.x, y2:p.y, class:'tick'}));
+        renderRingNode(ev, p, nodeDeg, nodeRadius);
+      });
+    } else {
+      const dot = el('circle', {cx:base.x, cy:base.y, r:22, class:'node-dot cluster-dot'});
+      const hit = el('circle', {cx:base.x, cy:base.y, r:30, class:'node-hit'});
+      const count = el('text', {x:base.x, y:base.y, class:'cluster-count'});
+      count.textContent = members.length;
+      hit.addEventListener('click', (e) => {
+        e.stopPropagation();
+        expandedClusterKey = clusterKey;
+        renderRing();
+      });
+      svg.appendChild(dot);
+      svg.appendChild(count);
+      svg.appendChild(hit);
+    }
   });
 
   if (ringEventsCache.length === 0){
