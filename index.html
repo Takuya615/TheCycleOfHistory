@@ -362,7 +362,7 @@
     object-fit:cover;
     border:1px solid rgba(36,27,20,.15);
   }
-  .detail-figure{height:150px;}
+  .detail-figure{height:150px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .detail-figure svg{height:100%;width:auto;}
   .detail-place{
     font-family:"Hiragino Kaku Gothic ProN","Avenir Next",sans-serif;
@@ -593,7 +593,15 @@
   .quiz-prompt-figure{margin:14px 0 0;}
   .quiz-prompt-figure svg{margin:0 auto;}
   .quiz-choices.fig-grid{display:grid;grid-template-columns:repeat(2,1fr);}
-  .quiz-choices.fig-grid[data-count="3"]{grid-template-columns:repeat(3,1fr);}
+  .quiz-choices.fig-grid > .quiz-choice-btn{min-width:0;}
+  /* 3択は横ならびにして、はみ出す場合は横スクロールできるようにする（2026-11-01） */
+  .quiz-choices.fig-grid[data-count="3"]{
+    display:flex;flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;
+  }
+  .quiz-choices.fig-grid[data-count="3"] > .quiz-choice-btn{flex:0 0 auto;scroll-snap-align:center;}
+  .quiz-choices.fig-grid[data-count="3"] > .quiz-choice-btn:first-child{margin-left:auto;}
+  .quiz-choices.fig-grid[data-count="3"] > .quiz-choice-btn:last-child{margin-right:auto;}
   .quiz-choice-btn.fig{
     padding:8px;display:flex;align-items:center;justify-content:center;
   }
@@ -2046,6 +2054,20 @@ const sheet = document.getElementById('sheet');
 const scrim = document.getElementById('scrim');
 let activeEventId = null;
 
+let detailFigureMode = 'icon';
+let detailFigureEvent = null;
+function renderDetailFigure(){
+  const ev = detailFigureEvent;
+  document.getElementById('detailFigure').innerHTML = !ev ? '' : (detailFigureMode === 'icon'
+    ? bodyFigureHTML({year:ev.year, icon:ev.icon})
+    : bodyFigureHTML({year:ev.year, dotScale:1.8}));
+}
+document.getElementById('detailFigure').addEventListener('click', () => {
+  if (!detailFigureEvent) return;
+  detailFigureMode = detailFigureMode === 'icon' ? 'dot' : 'icon';
+  renderDetailFigure();
+});
+
 function openDetailSheet(ev){
   hideCoachmark();
   activeEventId = ev.id;
@@ -2070,7 +2092,10 @@ function openDetailSheet(ev){
   }
   // 肖像画の右に、その年の部位にアイコンを載せた図を並べる（2026-11-01）。
   const detailFigureEl = document.getElementById('detailFigure');
-  detailFigureEl.innerHTML = isGreatman ? bodyFigureHTML({year:ev.year, icon:ev.icon}) : '';
+  // タップで「アイコン」と「ドットのみ」を切り替える（既定はアイコン、開くたびに戻す）。
+  detailFigureMode = 'icon';
+  detailFigureEvent = isGreatman ? ev : null;
+  renderDetailFigure();
   document.getElementById('detailVisuals').style.display = isGreatman ? 'flex' : 'none';
   document.getElementById('detailPlace').textContent = ev.place;
   document.getElementById('detailBody').innerHTML = (ev.counterfactual !== undefined) ? `
