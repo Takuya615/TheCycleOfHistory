@@ -5,7 +5,14 @@
   500
  ],
  "dotRadiusRatioOfWidth": 0.008,
- "note": "x=px/width, y=px/height. dots[] is in TIME ORDER (0=oldest at the top of the head, clockwise: head right side -> person's left hand -> left foot -> right foot -> right hand -> head left; 59=newest, just left of the head top). Year of dot k = start + (end-start)*k/59.",
+ "note": "x=px/width, y=px/height. dots[] is in TIME ORDER (0=oldest at the top of the head, clockwise: head right side -> person's left hand -> left foot -> right foot -> right hand -> head left; 59=newest, just left of the head top). anchors = dot numbers of head top / left hand tip / left foot tip / right foot tip / right hand tip. They map to 0%,20%,40%,60%,80% of the start-end span (1500,1600,1700,1800,1900); dots between anchors are spaced evenly in time within each section, and the last section (right hand tip -> head left) runs from 80% up to just before 100% (wraps to dot 0).",
+ "anchors": [
+  0,
+  10,
+  24,
+  36,
+  50
+ ],
  "dots": [
   {
    "i": 0,
