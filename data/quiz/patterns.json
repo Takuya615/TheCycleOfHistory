@@ -5,7 +5,7 @@
     "passThreshold": 3,
     "eventLocationStep": 5,
     "eventLocationMinYearDiff": 5,
-    "bodyPartMinSeparationYears": 20,
+    "bodyPartMinGapDots": 1,
     "choiceCountRules": [
       { "minHeldCount": 3, "maxHeldCount": 3, "choiceCount": 3 },
       { "minHeldCount": 4, "maxHeldCount": 5, "choiceCount": 4 },
@@ -49,7 +49,8 @@
       "id": "bodypart_to_icon",
       "label": "体の部位→アイコン（2026-09-25追加）",
       "steps": [1, 2, 3, 4],
-      "questionTemplate": "{{bodyPart}}あたりにあるものは？",
+      "questionTemplate": "この位置にあるものは？",
+      "promptFigure": true,
       "answerField": "iconLabel",
       "choicePool": "held_events.iconLabel",
       "requiresBodyPartSeparation": true
@@ -76,7 +77,8 @@
       "id": "bodypart_to_person",
       "label": "体の部位→人物（2026-09-25追加）",
       "steps": [1, 2, 3, 4],
-      "questionTemplate": "{{bodyPart}}あたりで活躍したのは誰？",
+      "questionTemplate": "この位置で活躍したのは誰？",
+      "promptFigure": true,
       "answerField": "title",
       "choicePool": "held_events.title"
     },
@@ -84,7 +86,8 @@
       "id": "bodypart_to_yearrange",
       "label": "体の部位→年代（2026-09-25追加）",
       "steps": [1, 2, 3, 4],
-      "questionTemplate": "{{bodyPart}}あたりは何年？",
+      "questionTemplate": "この位置は何年？",
+      "promptFigure": true,
       "answerField": "yearRange",
       "choicePool": "held_events.yearRange",
       "requiresBodyPartSeparation": true
@@ -112,11 +115,9 @@
       "label": "前後関係の代わりに、出来事の体の部位を問う（2026-09-25全面改訂：旧◯×形式を廃止）",
       "steps": [5],
       "staticEventSource": "data/quiz/order_events.json",
-      "bodyPointsSource": "data/quiz/body_points.json",
-      "minYearDiff": 5,
       "questionTemplate": "西暦：{{staticYear}}年\n事件：{{staticHeadline}}\n\nこの事件が起きたのはどこ？",
-      "answerField": "label",
-      "choicePool": "body_points.label",
+      "answerField": "bodyPart",
+      "choicePool": "pictogram_dots",
       "requiresBodyPartSeparation": true
     }
   ]
